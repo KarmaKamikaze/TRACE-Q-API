@@ -35,13 +35,21 @@
             <div class="col-md-6 offset-md-3">
                 <h1>Trace-Q trajectory simplifier</h1>
                 <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      Endpoint
+                    <button class="btn btn-secondary dropdown-toggle" id="endpointDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Select an endpoint
                     </button>
                     <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="#" id="insert">Insert trajectory</a></li>
-                      <li><a class="dropdown-item" href="#" id="query">Query</a></li>
-
+                      <li><a class="dropdown-item" href="#" id="insertEndpoint">Insert trajectory</a></li>
+                      <li><a class="dropdown-item" href="#" id="queryEndpoint">Query</a></li>
+                    </ul>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" id="tableDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Select a table
+                    </button>
+                    <ul class="dropdown-menu">
+                         <li><a class="dropdown-item" href="#" id="originalTable">Original</a></li>
+                         <li><a class="dropdown-item" href="#" id="simplifiedTable">Simplified</a></li>
                     </ul>
                 </div>
                 <div id="content">
@@ -58,11 +66,24 @@
     <script>
         $(document).ready(function(){
             // Set "Insert trajectory" as the default selected value and update dropdown text
-            $('#endpointDropdown').text('Insert trajectory');
-            $('#endpointDropdown').val('insert');
+            // $('#endpointDropdownButton').text('Insert trajectory');
+            // $('#endpointDropdownButton').val('insert');
 
-            $('#insert').click(function(){
-                $('#endpointDropdown').val('insert');
+            $(".dropdown-item").click(function() {
+                var selectedDropdownItem = $(this).text();
+
+                var selectedDropdownItemID = $(this).attr('id');
+
+                if (selectedDropdownItemID === "insertEndpoint" || selectedDropdownItemID === "queryEndpoint") {
+                    $("#endpointDropdownButton").text(selectedDropdownItem);
+                }
+                
+                if (selectedDropdownItemID === "originalTable" || selectedDropdownItemID === "simplifiedTable") {
+                    $("#tableDropdownButton").text(selectedDropdownItem);
+                }
+            });
+
+            $('#insertEndpoint').click(function(){
                 var html = `
                     <button type="button" class="btn btn-primary" id="runInsert">Run</button>
                     <div class="mb-3">
@@ -81,7 +102,7 @@
                 $('#content').html(html);
             });
     
-            $('#query').click(function(){
+            $('#queryEndpoint').click(function(){
                 var html = `
                     <button type="button" class="btn btn-primary" id="runQuery">Run</button>
                     <div class="mb-3">
@@ -127,7 +148,7 @@
                 var latitudeMax = $('#latitudeMax').val();
                 var timestampMin = $('#timestampMin').val();
                 var timestampMax = $('#timestampMax').val();
-                // Here you can make a POST request to query data based on the input ranges
+                
                 console.log("Querying data:", longitudeMin, longitudeMax, latitudeMin, latitudeMax, timestampMin, timestampMax);
             });
         });
