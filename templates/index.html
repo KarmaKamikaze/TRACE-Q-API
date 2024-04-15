@@ -65,6 +65,48 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function(){
+            $('#content').on('click', '#runInsert', function(){
+                var chosenTable = "original";
+                var data = {};
+
+                $('#inputContainer .input-group').each(function(index){
+                    var tableName = $('#tableDropdownButton').text().toLowerCase();
+                    var trajectoryID = $('#trajectoryID').val();
+                    var longitude = $(this).find('.longitude').val();
+                    var latitude = $(this).find('.latitude').val();
+                    var timestamp = $(this).find('.timestamp').val();
+
+                    if (!data[tableName]) {
+                        data[tableName] = {};
+                    }
+
+                    if (!data[tableName][trajectoryID]) {
+                        data[tableName][trajectoryID] = {};
+                    }
+
+                    data[tableName][trajectoryID][index + 1] = {
+                        timestamp: timestamp,
+                        longitude: parseFloat(longitude), 
+                        latitude: parseFloat(latitude)    
+                    };
+                });
+
+            console.log(JSON.stringify(data));
+
+            // Make the API call
+            $.ajax({
+                url: 'http://localhost:5000/insert',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    console.log('Successfully inserted:', response);
+                },
+                error: function(error) {
+                    console.error('Error inserting data:', error);
+                }
+            });
+        });
             // Set "Insert trajectory" as the default selected value and update dropdown text
             // $('#endpointDropdownButton').text('Insert trajectory');
             // $('#endpointDropdownButton').val('insert');
@@ -83,20 +125,34 @@
                 }
             });
 
+            $('#originalTable').click(function() {
+                chosenTable = "original";
+                var selectedDropdownItem = $(this).text();
+                $("tableDropdownButton").text(selectedDropdownItem);
+            });
+
+            $('#simplifiedTable').click(function() {
+                chosenTable = "simplified";
+                var selectedDropdownItem = $(this).text();
+                $("tableDropdownButton").text(selectedDropdownItem);
+            });
+
             $('#insertEndpoint').click(function(){
                 var html = `
                     <button type="button" class="btn btn-primary" id="runInsert">Run</button>
-                    <div class="mb-3">
-                        <label for="longitude" class="form-label">Longitude</label>
-                        <input type="number" class="form-control" id="longitude" placeholder="Enter Longitude">
+                    <input type="number" aria-label="trajectory ID" id="trajectoryID">
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" id="inputGroupFile02">
+                        <label class="input-group-text" for="inputGroupFile02">Upload</label>
                     </div>
-                    <div class="mb-3">
-                        <label for="latitude" class="form-label">Latitude</label>
-                        <input type="number" class="form-control" id="latitude" placeholder="Enter Latitude">
-                    </div>
-                    <div class="mb-3">
-                        <label for="timestamp" class="form-label">Timestamp</label>
-                        <input type="text" class="form-control" id="timestamp" placeholder="Enter Timestamp">
+                    <div id="inputContainer">
+                        <button id="addInput" class="btn btn-primary">Add trajectory</button>
+                        <div class="input-group mb-3">
+                            <input type="text" placeholder="longitude" aria-label="Longitude" class="form-control longitude">
+                            <input type="text" placeholder="latitude" aria-label="Latitude" class="form-control latitude">
+                            <input type="date" aria-label="Timestamp" class="form-control timestamp">
+                        <button class="btn btn-danger deleteInput">Delete</button>
+                        </div>
                     </div>
                 `;
                 $('#content').html(html);
@@ -133,14 +189,54 @@
                 $('#content').html(html);
             });
     
-            $('#content').on('click', '#runInsert', function(){
-                var longitude = $('#longitude').val();
-                var latitude = $('#latitude').val();
-                var timestamp = $('#timestamp').val();
-                // Here you can make a POST request to insert the trajectory data
-                console.log("Inserting trajectory data:", longitude, latitude, timestamp);
+            // $('#content').on('click', '#runInsert', function(){
+            //     var tableName = $('tableDropdownButton').text();
+            //     var longitude = $('#longitude').val();
+            //     var latitude = $('#latitude').val();
+            //     var timestamp = $('#timestamp').val();
+                
+            //     // Prepare the data object
+            //     var data = {
+            //         tableName: tableName,
+            //         longitude: longitude,
+            //         latitude: latitude,
+            //         timestamp: timestamp
+            //     };
+
+            //     // Make the API call
+            //     $.ajax({
+            //         url: 'http://localhost:5000/insert',
+            //         type: 'POST',
+            //         contentType: 'application/json',
+            //         data: JSON.stringify(data),
+            //         success: function(response) {
+            //             console.log('Successfully inserted:', response);
+            //         },
+            //         error: function(error) {
+            //             console.error('Error inserting data:', error);
+            //         }
+            //     });
+
+            //     console.log("Inserting trajectory data:", longitude, latitude, timestamp);
+            // });
+
+            var inputCount = 1;
+            $('#content').on('click', '#addInput', function(){
+                var newInputGroup = `
+                    <div class="input-group mb-3">
+                        <input type="text" placeholder="longitude" aria-label="Longitude" class="form-control longitude">
+                        <input type="text" placeholder="latitude" aria-label="Latitude" class="form-control latitude">
+                        <input type="date" aria-label="Timestamp" class="form-control timestamp">
+                        <button class="btn btn-danger deleteInput">Delete</button>
+                    </div>
+                `;
+                $('#inputContainer').append(newInputGroup);
             });
-    
+
+            $('#content').on('click', '.deleteInput', function(){
+                $(this).closest('.input-group').remove();
+            });
+
             $('#content').on('click', '#runQuery', function(){
                 var longitudeMin = $('#longitudeMin').val();
                 var longitudeMax = $('#longitudeMax').val();
