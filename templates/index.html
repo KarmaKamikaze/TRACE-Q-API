@@ -64,6 +64,7 @@
             $('#insert').click(function(){
                 $('#endpointDropdown').val('insert');
                 var html = `
+                    <button type="button" class="btn btn-primary" id="runInsert">Run</button>
                     <div class="mb-3">
                         <label for="longitude" class="form-label">Longitude</label>
                         <input type="number" class="form-control" id="longitude" placeholder="Enter Longitude">
@@ -76,13 +77,13 @@
                         <label for="timestamp" class="form-label">Timestamp</label>
                         <input type="text" class="form-control" id="timestamp" placeholder="Enter Timestamp">
                     </div>
-                    <button type="button" class="btn btn-primary" id="runInsert">Run</button>
                 `;
                 $('#content').html(html);
             });
     
             $('#query').click(function(){
                 var html = `
+                    <button type="button" class="btn btn-primary" id="runQuery">Run</button>
                     <div class="mb-3">
                         <label for="longitudeMin" class="form-label">Longitude Min</label>
                         <input type="number" class="form-control" id="longitudeMin" placeholder="Enter Min Longitude">
@@ -107,7 +108,6 @@
                         <label for="timestampMax" class="form-label">Timestamp Max</label>
                         <input type="text" class="form-control" id="timestampMax" placeholder="Enter Max Timestamp">
                     </div>
-                    <button type="button" class="btn btn-primary" id="runQuery">Run</button>
                 `;
                 $('#content').html(html);
             });
