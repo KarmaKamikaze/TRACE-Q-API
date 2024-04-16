@@ -74,28 +74,28 @@
                     var trajectoryID = $('#trajectoryID').val();
                     var longitude = $(this).find('.longitude').val();
                     var latitude = $(this).find('.latitude').val();
-                    var timestamp = $(this).find('.timestamp').val();
+                    var timestamp = $(this).find('.timestamp').val().replace("T", " ");
 
-                    if (!data[tableName]) {
-                        data[tableName] = {};
-                    }
+                    if(!data["table"])
+                        data["table"] = tableName;
 
-                    if (!data[tableName][trajectoryID]) {
-                        data[tableName][trajectoryID] = {};
-                    }
+                    if(!data["id"])
+                        data["id"] = trajectoryID
 
-                    data[tableName][trajectoryID][index + 1] = {
+                    if(!data["locations"])
+                        data["locations"] = [];
+
+                    data["locations"].push({
                         timestamp: timestamp,
                         longitude: parseFloat(longitude), 
                         latitude: parseFloat(latitude)    
-                    };
+                    });
                 });
 
             console.log(JSON.stringify(data));
 
-            // Make the API call
             $.ajax({
-                url: 'http://localhost:5000/insert',
+                url: 'http://localhost:8080/insert',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(data),
@@ -150,7 +150,7 @@
                         <div class="input-group mb-3">
                             <input type="text" placeholder="longitude" aria-label="Longitude" class="form-control longitude">
                             <input type="text" placeholder="latitude" aria-label="Latitude" class="form-control latitude">
-                            <input type="date" aria-label="Timestamp" class="form-control timestamp">
+                            <input type="datetime-local" aria-label="Timestamp" class="form-control timestamp" step="1">
                         <button class="btn btn-danger deleteInput">Delete</button>
                         </div>
                     </div>
@@ -226,7 +226,7 @@
                     <div class="input-group mb-3">
                         <input type="text" placeholder="longitude" aria-label="Longitude" class="form-control longitude">
                         <input type="text" placeholder="latitude" aria-label="Latitude" class="form-control latitude">
-                        <input type="date" aria-label="Timestamp" class="form-control timestamp">
+                        <input type="datetime-local" aria-label="Timestamp" class="form-control timestamp" step="1">
                         <button class="btn btn-danger deleteInput">Delete</button>
                     </div>
                 `;
