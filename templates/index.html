@@ -35,7 +35,7 @@
             <div class="col-md-6 offset-md-3">
                 <h1>Trace-Q trajectory simplifier</h1>
                 <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" id="endpointDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-secondary dropdown-toggle mt-2" id="endpointDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                       Select an endpoint
                     </button>
                     <ul class="dropdown-menu">
@@ -44,7 +44,7 @@
                     </ul>
                 </div>
                 <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" id="tableDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-secondary dropdown-toggle mt-2 mb-2" id="tableDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Select a table
                     </button>
                     <ul class="dropdown-menu">
@@ -141,13 +141,13 @@
                 var html = `
                     <button type="button" class="btn btn-primary" id="runInsert">Run</button>
                     <input type="number" aria-label="trajectory ID" id="trajectoryID">
-                    <div class="input-group mb-3">
+                    <div class="input-group mb-3 mt-2">
                         <input type="file" class="form-control" id="inputGroupFile02">
                         <label class="input-group-text" for="inputGroupFile02">Upload</label>
                     </div>
                     <div id="inputContainer">
                         <button id="addInput" class="btn btn-primary">Add trajectory</button>
-                        <div class="input-group mb-3">
+                        <div class="input-group mb-3 mt-2">
                             <input type="text" placeholder="longitude" aria-label="Longitude" class="form-control longitude">
                             <input type="text" placeholder="latitude" aria-label="Latitude" class="form-control latitude">
                             <input type="datetime-local" aria-label="Timestamp" class="form-control timestamp" step="1">
