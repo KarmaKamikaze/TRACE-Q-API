@@ -142,8 +142,9 @@
                     <button type="button" class="btn btn-primary" id="runInsert">Run</button>
                     <input type="number" aria-label="trajectory ID" id="trajectoryID">
                     <div class="input-group mb-3 mt-2">
-                        <input type="file" class="form-control" id="inputGroupFile02">
-                        <label class="input-group-text" for="inputGroupFile02">Upload</label>
+                        <input type="file" class="form-control" id="fileInput">
+                     <!--   <label class="input-group-text" for="inputGroupFile02">Upload</label> -->
+                        <button id="uploadButton">Upload File</button>
                     </div>
                     <div id="inputContainer">
                         <button id="addInput" class="btn btn-primary">Add trajectory</button>
@@ -157,7 +158,46 @@
                 `;
                 $('#content').html(html);
             });
-    
+
+            $(document).ready(function() {
+                $('#uploadButton').click(function() {
+                    var file = $('#fileInput')[0].files[0];
+                    var selectedtable = $('#selectedtable').val();
+
+                    if (file && selectedtable) {
+                        var reader = new FileReader();
+
+                        reader.onload = function(e) {
+                            var text = e.target.result;
+
+                            // Convert text to JSON
+                            var jsonData = {
+                                content: text,
+                                table: selectedtable
+                            };
+
+                            // Send JSON data to endpoint
+                            $.ajax({
+                                url: 'http://localhost:8080/insert',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                data: JSON.stringify(jsonData),
+                                success: function(response) {
+                                    console.log('Data successfully sent:', response);
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Error:', error);
+                                }
+                            });
+                        };
+
+                        reader.readAsText(file);
+                    } else {
+                        alert('Please select a file.');
+                    }
+                });
+            });
+
             $('#queryEndpoint').click(function(){
                 var html = `
                     <button type="button" class="btn btn-primary" id="runQuery">Run</button>
