@@ -143,7 +143,6 @@
                     <input type="number" aria-label="trajectory ID" id="trajectoryID">
                     <div class="input-group mb-3 mt-2">
                         <input type="file" class="form-control" id="fileInput">
-                     <!--   <label class="input-group-text" for="inputGroupFile02">Upload</label> -->
                         <button id="uploadButton">Upload File</button>
                     </div>
                     <div id="inputContainer">
@@ -162,9 +161,9 @@
             $(document).ready(function() {
                 $('#uploadButton').click(function() {
                     var file = $('#fileInput')[0].files[0];
-                    var selectedtable = $('#selectedtable').val();
 
-                    if (file && selectedtable) {
+
+                    if (file && chosenTable) {
                         var reader = new FileReader();
 
                         reader.onload = function(e) {
@@ -173,7 +172,7 @@
                             // Convert text to JSON
                             var jsonData = {
                                 content: text,
-                                table: selectedtable
+                                table: chosenTable
                             };
 
                             // Send JSON data to endpoint
