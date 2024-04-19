@@ -19,13 +19,13 @@ def endpoint():
     else:
         return "Unknown item"
 
-@app.route('/insert', methods=['POST'])
-def insert_trajectory():
-    data = request.get_json()
+# @app.route('/insert', methods=['POST'])
+# def insert_trajectory():
+#     data = request.get_json()
     
-    x = requests.post("http://localhost:8080/insert", json = data)
+#     x = requests.post("http://localhost:8080/insert", json = data)
 
-    return jsonify(data), 200
+#     return jsonify(data), 200
 
 
 def insert_trajectory():
