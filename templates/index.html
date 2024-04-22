@@ -142,8 +142,8 @@
                     <button type="button" class="btn btn-primary" id="runInsert">Run</button>
                     <input type="number" aria-label="trajectory ID" id="trajectoryID">
                     <div class="input-group mb-3 mt-2">
-                        <input type="file" class="form-control" id="fileInput">
-                        <button id="uploadButton">Upload File</button>
+                        <input type="file" class="form-control" id="fileInput"><br>
+                        <button id="uploadButton" class="rounded">Upload File</button>
                     </div>
                     <div id="inputContainer">
                         <button id="addInput" class="btn btn-primary">Add trajectory</button>
@@ -162,20 +162,17 @@
                 $('#uploadButton').click(function() {
                     var file = $('#fileInput')[0].files[0];
 
-
                     if (file && chosenTable) {
                         var reader = new FileReader();
 
                         reader.onload = function(e) {
                             var text = e.target.result;
 
-                            // Convert text to JSON
                             var jsonData = {
                                 content: text,
                                 table: chosenTable
                             };
 
-                            // Send JSON data to endpoint
                             $.ajax({
                                 url: 'http://localhost:8080/insert',
                                 type: 'POST',
