@@ -92,24 +92,47 @@
                     });
                 });
 
-            console.log(JSON.stringify(data));
-
-            $.ajax({
-                url: 'http://localhost:8080/insert',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(data),
-                success: function(response) {
-                    console.log('Successfully inserted:', response);
-                },
-                error: function(error) {
-                    console.error('Error inserting data:', error);
-                }
+                $.ajax({
+                    url: 'http://localhost:8080/insert',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function(response) {
+                        console.log('Successfully inserted:', response);
+                    },
+                    error: function(error) {
+                        console.error('Error inserting data:', error);
+                    }
+                });
             });
-        });
-            // Set "Insert trajectory" as the default selected value and update dropdown text
-            // $('#endpointDropdownButton').text('Insert trajectory');
-            // $('#endpointDropdownButton').val('insert');
+
+            $('#content').on('click', '#runQuery', function(){ 
+                var data = {};
+
+                data["db_table"] = $('#tableDropdownButton').text().toLowerCase();
+
+                data["longitudeMin"] = $('#longitudeMin').val();
+                data["longitudeMax"] = $('#longitudeMax').val();
+
+                data["latitudeMin"] = $('#latitudeMin').val();
+                data["latitudeMax"] = $('#latitudeMax').val();
+                
+                data["timestampMin"] = $('#timestampMin').val().replace("T", " ");
+                data["timestampMax"] = $('#timestampMax').val().replace("T", " ");
+
+                $.ajax({
+                    url: 'http://localhost:8080/db_range_query',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function(response) {
+                        console.log('Successfully range queried:', response);
+                    },
+                    error: function(error) {
+                        console.error('Error making range query:', error);
+                    }
+                });
+            });
 
             $(".dropdown-item").click(function() {
                 var selectedDropdownItem = $(this).text();
@@ -215,11 +238,11 @@
                     </div>
                     <div class="mb-3">
                         <label for="timestampMin" class="form-label">Timestamp Min</label>
-                        <input type="text" class="form-control" id="timestampMin" placeholder="Enter Min Timestamp">
+                        <input type="datetime-local" aria-label="timestampMin" id="timestampMin" class="form-control timestampMin" step="1">
                     </div>
                     <div class="mb-3">
                         <label for="timestampMax" class="form-label">Timestamp Max</label>
-                        <input type="text" class="form-control" id="timestampMax" placeholder="Enter Max Timestamp">
+                        <input type="datetime-local" aria-label="Timestamp" id="timestampMax" class="form-control timestampMax" step="1">
                     </div>
                 `;
                 $('#content').html(html);
@@ -280,8 +303,6 @@
                 var latitudeMax = $('#latitudeMax').val();
                 var timestampMin = $('#timestampMin').val();
                 var timestampMax = $('#timestampMax').val();
-                
-                console.log("Querying data:", longitudeMin, longitudeMax, latitudeMin, latitudeMax, timestampMin, timestampMax);
             });
         });
         </script>
