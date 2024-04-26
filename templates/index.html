@@ -10,23 +10,6 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
           <a class="navbar-brand" href="#">Trace-Q</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
-            <ul class="navbar-nav">
-              <li class="nav-item dropdown">
-                <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                  Dropdown
-                </button>
-                <ul class="dropdown-menu dropdown-menu-dark">
-                  <li><a class="dropdown-item" href="#">Action</a></li>
-                  <li><a class="dropdown-item" href="#">Another action</a></li>
-                  <li><a class="dropdown-item" href="#">Something else here</a></li>
-                </ul>
-              </li>
-            </ul>
-          </div>
         </div>
       </nav>
 
@@ -130,12 +113,13 @@
                 });
             });
 
+
             $(".dropdown-item").click(function() {
                 var selectedDropdownItem = $(this).text();
 
                 var selectedDropdownItemID = $(this).attr('id');
 
-                if (selectedDropdownItemID === "insertEndpoint" || selectedDropdownItemID === "queryEndpoint") {
+                if (selectedDropdownItemID === "insertEndpoint" || selectedDropdownItemID === "queryEndpoint" || selectedDropdownItemID === "simplifyEndpoint") {
                     $("#endpointDropdownButton").text(selectedDropdownItem);
                 }
                 
@@ -158,7 +142,6 @@
 
             $('#insertEndpoint').click(function(){
                 var html = `
-                    <!--<input type="number" aria-label="trajectory ID" id="trajectoryID"> -->
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle mt-2 mb-2" id="tableDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Select a table
@@ -186,29 +169,34 @@
                 $('#content').html(html);
             });
 
-           $('#uploadButton').click(function() {
+            $('#content').on('click', '#uploadButton', function(){
+               console.log("entered");
                var file = $('#fileInput')[0].files[0];
-
-               if (file && chosenTable) {
+               var tableName = $("#tableDropdownButton").text().toLowerCase();
+               console.log(file);
+               console.log(tableName);
+               if (file && tableName) {
                    var reader = new FileReader();
 
-                   reader.onload = function(e) {
+                   reader.onload = function (e) {
                        var text = e.target.result;
 
                        var jsonData = {
                            content: text,
-                           table: chosenTable
+                           table: tableName
                        };
+
+                       console.log(jsonData);
 
                        $.ajax({
                            url: 'http://localhost:8080/insert',
                            type: 'POST',
                            contentType: 'application/json',
                            data: JSON.stringify(jsonData),
-                           success: function(response) {
+                           success: function (response) {
                                console.log('Data successfully sent:', response);
                            },
-                           error: function(xhr, status, error) {
+                           error: function (xhr, status, error) {
                                console.error('Error:', error);
                            }
                        });
@@ -223,10 +211,6 @@
 
             $('#simplifyEndpoint').click(function (){
                 var html =`
-     <!--               <div class="mb-2">
-                        <label for="trajectoryID" class="form-label">Trajectory ID</label>
-                        <input type="number" aria-label="trajectory ID" id="trajectoryID">
-                    </div> -->
                       <div class="mb-2">
                         <label for="resolutionScale" class="form-label">Resolution scale</label>
                         <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#resScaleCollapse" aria-expanded="false" aria-controls="resScaleCollapse">Info</button>
@@ -340,40 +324,48 @@
                 $('#content').html(html);
             });
 
-            $('#runSimplify').click(function() {
-                var resolutionScale = $('#resolutionScale').val();
-                var minQueryAccuracy = $('#minQueryAccuracy').val();
-                var rangeQueryGridDensity = $('#rangeQueryGridDensity').val();
-                var knnQueryGridDensity = $('#knnQueryGridDensity').val();
-                var windowsPerGridPoint = $('#windowsPerGridPoint').val();
-                var windowExpansionRate = $('#windowExpansionRate').val();
-                var rangeQueryTimeInterval = $('#rangeQueryTimeInterval').val();
-                var knnQueryTimeInterval = $('#knnQueryTimeInterval').val();
-                var knnK = $('#knnK').val();
+            $('#content').on('click', '#runSimplify', function(){
+                console.log("entered");
+
+                var resolutionScale = parseFloat ($('#resolutionScale').val());
+                var minQueryAccuracy = parseFloat($('#minQueryAccuracy').val());
+                var rangeQueryGridDensity = parseFloat($('#rangeQueryGridDensity').val());
+                var knnQueryGridDensity = parseFloat($('#knnQueryGridDensity').val());
+                var windowsPerGridPoint = parseFloat($('#windowsPerGridPoint').val());
+                var windowExpansionRate = parseFloat($('#windowExpansionRate').val());
+                var rangeQueryTimeInterval = parseFloat($('#rangeQueryTimeInterval').val());
+                var knnQueryTimeInterval = parseFloat($('#knnQueryTimeInterval').val());
+                var knnK = parseFloat($('#knnK').val());
 
                 var requestBody = {
-                    resolutionScale: resolutionScale,
-                    minQueryAccuracy: minQueryAccuracy,
-                    rangeQueryGridDensity: rangeQueryGridDensity,
-                    knnQueryGridDensity: knnQueryGridDensity,
-                    windowsPerGridPoint: windowsPerGridPoint,
-                    windowExpansionRate: windowExpansionRate,
-                    rangeQueryTimeInterval: rangeQueryTimeInterval,
-                    knnQueryTimeInterval: knnQueryTimeInterval,
-                    knnK: knnK
+                    "resolution_scale": resolutionScale,
+                    "min_query_accuracy": minQueryAccuracy,
+                    "range_query_grid_density": rangeQueryGridDensity,
+                    "knn_query_grid_density": knnQueryGridDensity,
+                    "windows_per_grid_point": windowsPerGridPoint,
+                    "window_expansion_rate": windowExpansionRate,
+                    "range_query_time_interval": rangeQueryTimeInterval,
+                    "knn_query_time_interval": knnQueryTimeInterval,
+                    "knn_k": knnK
                 };
+                console.log(requestBody);
 
+                console.log("before post");
                 $.ajax({
                     url: 'http://localhost:8080/run',
                     type: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify(requestData),
+                    data: JSON.stringify(requestBody),
                     success: function(response) {
-                        console.log('Succesfull simplification:', response);
+                        console.log('Successful simplification:', response);
                     },
                     error: function(xhr, status, error) {
+                        console.log(xhr);
+                        console.log(status);
+                        console.log(error);
                         console.error('Error making the simplification:', error);
                     }
+
                 });
 
             });
@@ -381,6 +373,7 @@
             $('#queryEndpoint').click(function(){
                 var html = `
                     <div class="dropdown">
+                      <button class="btn btn-secondary dropdown-toggle mt-2 mb-2" id="tableDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                       <button class="btn btn-secondary dropdown-toggle mt-2 mb-2" id="tableDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                            Select a table
                         </button>
