@@ -151,93 +151,42 @@
                              <li><a class="dropdown-item" href="#" id="simplifiedTable">Simplified</a></li>
                         </ul>
                     </div>
-                    <div class="input-group mb-3 mt-2">
-                        <input type="file" class="form-control" id="fileInput"><br>
-                        <button id="uploadButton" class="btn btn-primary rounded">Upload File</button>
-                    </div>
-                    <div id="inputContainer">
-                        <button id="addInput" class="btn btn-primary">Add trajectory</button>
-                        <div class="input-group mb-3 mt-2">
-                            <input type="text" placeholder="longitude" aria-label="Longitude" class="form-control longitude">
-                            <input type="text" placeholder="latitude" aria-label="Latitude" class="form-control latitude">
-                            <input type="datetime-local" aria-label="Timestamp" class="form-control timestamp" step="1">
-                        <button class="btn btn-danger deleteInput">Delete</button>
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            Upload file
+                        </div>
+                        <div class="card-body">
+                            <div class="input-group mb-3 mt-2">
+                                <input type="file" class="form-control" id="fileInput"><br>
+                                <button id="uploadButton" class="btn btn-primary rounded">Upload File</button>
+                            </div>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary" id="runInsert">Insert trajectory</button>
+                    <div class="card">
+                        <div class="card-header">
+                            Insert Trajectory point by point
+                        </div>
+                        <div class="card-body">
+                            <div id="inputContainer">
+                                <button id="addInput" class="btn btn-primary">Add trajectory</button>
+                                <div class="input-group mb-3 mt-2">
+                                    <input type="text" placeholder="longitude" aria-label="Longitude" class="form-control longitude">
+                                    <input type="text" placeholder="latitude" aria-label="Latitude" class="form-control latitude">
+                                    <input type="datetime-local" aria-label="Timestamp" class="form-control timestamp" step="1">
+                                    <button class="btn btn-danger deleteInput">Delete</button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary" id="runInsert">Insert trajectory</button>
+                        </div>
+                    </div>
                 `;
                 $('#content').html(html);
             });
 
-     /*       $('#content').on('click', '#uploadButton', function() {
-                console.log("entered");
-                var file = $('#fileInput')[0].files[0];
-                var tableName = $("#tableDropdownButton").text().toLowerCase();
-                var idCounter = 1;
-
-                console.log(file);
-                console.log(tableName);
-
-                if (file && tableName) {
-                    var reader = new FileReader();
-
-                    reader.onload = function(e) {
-                        var text = e.target.result;
-                        var lines = text.split('\n');
-                        var locations = [];
-
-                        lines.forEach(function(line) {
-                            var parts = line.trim().split(',');
-                            var timestamp = parts[1];
-                            var longitude = parseFloat(parts[2]);
-                            var latitude = parseFloat(parts[3]);
-
-                            var location = {
-                                "timestamp": timestamp,
-                                "longitude": longitude,
-                                "latitude": latitude
-                            };
-
-                            locations.push(location);
-                        });
-
-                        var jsonData = {
-                            "db_table": "original",
-                            "id": idCounter.toString(),
-                            "locations": locations
-                        };
-                        console.log(idCounter);
-
-                        idCounter++;
-
-                        console.log(idCounter);
-
-                        $.ajax({
-                            url: 'http://localhost:8080/insert',
-                            type: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify(jsonData),
-                            success: function(response) {
-                                console.log('Data successfully sent:', response);
-                            },
-                            error: function(xhr, status, error) {
-                                console.log(xhr);
-                                console.log(status);
-                                console.log(error);
-                                console.error('Error:', error);
-                            }
-                        });
-                    };
-
-                    reader.readAsText(file);
-                } else {
-                    alert('Please select a file and table name.');
-                }
-            }); */
+            var idCounter = 0;
             $('#content').on('click', '#uploadButton', function() {
                 var file = $('#fileInput')[0].files[0];
                 var tableName = $("#tableDropdownButton").text().toLowerCase();
-                var idCounter = 1; // Start ID counter at 10000
 
                 if (file && tableName) {
                     var reader = new FileReader();
@@ -248,7 +197,6 @@
                         var chunkSize = 450;
                         var numChunks = Math.ceil(lines.length / chunkSize);
 
-                        // Function to process each chunk
                         function processChunk(chunkIndex) {
                             var start = chunkIndex * chunkSize;
                             var end = Math.min(start + chunkSize, lines.length);
@@ -257,41 +205,55 @@
 
                             chunkLines.forEach(function(line) {
                                 var parts = line.trim().split(',');
-                                var timestamp = parts[1];
-                                var longitude = parseFloat(parts[2]);
-                                var latitude = parseFloat(parts[3]);
 
-                                var location = {
-                                    "timestamp": timestamp,
-                                    "longitude": longitude,
-                                    "latitude": latitude
-                                };
+                                // Check if the line has the expected number of fields
+                                if (parts.length === 4) {
+                                    var timestamp = parts[1];
+                                    var longitude = parseFloat(parts[2]);
+                                    var latitude = parseFloat(parts[3]);
 
-                                locations.push(location);
-                            });
+                                    // Check if longitude and latitude are valid numbers
+                                    if (!isNaN(longitude) && !isNaN(latitude)) {
+                                        var location = {
+                                            "timestamp": timestamp,
+                                            "longitude": longitude,
+                                            "latitude": latitude
+                                        };
 
-                            var jsonData = {
-                                "db_table": "original",
-                                "id": (idCounter + chunkIndex).toString(), // Increment ID counter for each chunk
-                                "locations": locations
-                            };
-
-                            console.log(jsonData);
-
-                            $.ajax({
-                                url: 'http://localhost:8080/insert',
-                                type: 'POST',
-                                contentType: 'application/json',
-                                data: JSON.stringify(jsonData),
-                                success: function(response) {
-                                    console.log('Data successfully sent for chunk ' + chunkIndex + ':', response);
-                                },
-                                error: function(xhr, status, error) {
-                                    console.log(xhr);
-                                    console.log(status);
-                                    console.error('Error for chunk ' + chunkIndex + ':', error);
+                                        locations.push(location);
+                                    } else {
+                                        console.log('Invalid longitude or latitude:', line);
+                                    }
+                                } else {
+                                    console.log('Invalid line format:', line);
                                 }
                             });
+
+                            // Proceed with sending data only if locations array is not empty
+                            if (locations.length > 0) {
+                                var jsonData = {
+                                    "db_table": "original",
+                                    "id": idCounter.toString(), // Use the same ID for all chunks
+                                    "locations": locations
+                                };
+
+                                console.log(jsonData);
+
+                                $.ajax({
+                                    url: 'http://localhost:8080/insert',
+                                    type: 'POST',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify(jsonData),
+                                    success: function(response) {
+                                        console.log('Data successfully sent for chunk ' + chunkIndex + ':', response);
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error('Error for chunk ' + chunkIndex + ':', error);
+                                    }
+                                });
+                            } else {
+                                console.log('No valid data to send for chunk ' + chunkIndex);
+                            }
                         }
 
                         // Process each chunk sequentially
@@ -299,13 +261,14 @@
                             processChunk(i);
                         }
                     };
-                    console.log(idCounter);
+
                     reader.readAsText(file);
+                    idCounter++;
                 } else {
                     alert('Please select a file and table name.');
                 }
-            });
 
+            });
 
             $('#simplifyEndpoint').click(function (){
                 var html =`
@@ -425,17 +388,18 @@
             $('#content').on('click', '#runSimplify', function(){
                 console.log("entered");
 
-                var resolutionScale = parseFloat($('#resolutionScale').val());
-                var minQueryAccuracy = parseFloat($('#minQueryAccuracy').val());
-                var rangeQueryGridDensity = parseFloat($('#rangeQueryGridDensity').val());
-                var knnQueryGridDensity = parseFloat($('#knnQueryGridDensity').val());
+                var resolutionScale = parseFloat($('#resolutionScale').val()).toFixed(1);
+                var minQueryAccuracy = parseFloat($('#minQueryAccuracy').val()).toFixed(2);
+                var rangeQueryGridDensity = parseFloat($('#rangeQueryGridDensity').val()).toFixed(1);
+                var knnQueryGridDensity = parseFloat($('#knnQueryGridDensity').val()).toFixed(1);
                 var windowsPerGridPoint = parseInt($('#windowsPerGridPoint').val());
-                var windowExpansionRate = parseFloat($('#windowExpansionRate').val());
-                var rangeQueryTimeInterval = parseFloat($('#rangeQueryTimeInterval').val());
-                var knnQueryTimeInterval = parseFloat($('#knnQueryTimeInterval').val());
+                var windowExpansionRate = parseFloat($('#windowExpansionRate').val()).toFixed(1);
+                var rangeQueryTimeInterval = parseFloat($('#rangeQueryTimeInterval').val()).toFixed(1);
+                var knnQueryTimeInterval = parseFloat($('#knnQueryTimeInterval').val()).toFixed(2);
                 var knnK = parseInt($('#knnK').val());
 
                 var requestBody = {
+
                     "resolution_scale": resolutionScale,
                     "min_query_accuracy": minQueryAccuracy,
                     "range_query_grid_density": rangeQueryGridDensity,
