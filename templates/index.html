@@ -26,7 +26,10 @@
                             <button class="nav-link" id="simplifyEndpoint" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Simplify</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="queryEndpoint" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Query</button>
+                            <button class="nav-link" id="rangeQueryEndpoint" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Query</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="knnEndpoint" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">KNN</button>
                         </li>
                     </ul>
                 </div>
@@ -119,7 +122,7 @@
 
                 var selectedDropdownItemID = $(this).attr('id');
 
-                if (selectedDropdownItemID === "insertEndpoint" || selectedDropdownItemID === "queryEndpoint" || selectedDropdownItemID === "simplifyEndpoint") {
+                if (selectedDropdownItemID === "insertEndpoint" || selectedDropdownItemID === "RangeQueryEndpoint" || selectedDropdownItemID === "simplifyEndpoint") {
                     $("#endpointDropdownButton").text(selectedDropdownItem);
                 }
                 
@@ -415,20 +418,6 @@
 
             });
 
-            $('#queryEndpoint').click(function(){
-                var html = `
-                    <div class="dropdown">
-                      <button class="btn btn-secondary dropdown-toggle mt-2 mb-2" id="tableDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      <button class="btn btn-secondary dropdown-toggle mt-2 mb-2" id="tableDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                           Select a table
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#" id="originalTable">Original</a></li>
-                            <li><a class="dropdown-item" href="#" id="simplifiedTable">Simplified</a></li>
-                        </ul>
-                    </div>
-                    <button type="button" class="btn btn-primary" id="runQuery">Run Query</button>
-    
             $('#rangeQueryEndpoint').click(function(){
                 var html = `
                     <button type="button" class="btn btn-primary" id="runRangeQuery">Run</button>
@@ -485,6 +474,7 @@
                     </div>
                 `;
                 $('#content').html(html);
+
             });
 
             var inputCount = 1;
