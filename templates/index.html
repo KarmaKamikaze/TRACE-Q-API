@@ -45,10 +45,11 @@
                         Select an endpoint
                         </button>
                         <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" id="insertEndpoint">Insert trajectory</a></li>
-                        <li><a class="dropdown-item" href="#" id="rangeQueryEndpoint">Query</a></li>
-                        <li><a class="dropdown-item" href="#" id="knnEndpoint">KNN</a></li>
-                        <li><a class="dropdown-item" href="#" id="visualize">Visualize</a></li>
+                            <li><a class="dropdown-item" href="#" id="insert_endpoint">Insert trajectory</a></li>
+                            <li><a class="dropdown-item" href="#" id="range_query_endpoint">Query</a></li>
+                            <li><a class="dropdown-item" href="#" id="knn_endpoint">KNN</a></li>
+                            <li><a class="dropdown-item" href="#" id="visualize">Visualize</a></li>
+                            <li><a class="dropdown-item" href="#" id="reset_db">Reset</a></li>
                         </ul>
                     </div>
                     <div class="dropdown">
@@ -56,14 +57,14 @@
                             Select a table
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#" id="originalTable">Original</a></li>
-                            <li><a class="dropdown-item" href="#" id="simplifiedTable">Simplified</a></li>
+                            <li><a class="dropdown-item" href="#" id="original_table">Original</a></li>
+                            <li><a class="dropdown-item" href="#" id="simplified_table">Simplified</a></li>
                         </ul>
                     </div>
                     <div id="content">
 
                     </div>
-                    <div id="map" style="height: 400px;"></div>
+                    <div id="map" style="height: 400px; display: none;"></div>
                 </div>
             </div>
         </div>
@@ -111,23 +112,12 @@
             map.setView([39.71923, 116.78379], 13);
         }
 
-        function connectTheDots(data){
-            var c = [];
-            for(i in data._layers) {
-                var x = data._layers[i]._latlng.lat;
-                var y = data._layers[i]._latlng.lng;
-                c.push([x, y]);
-            }
-            return c;
-        }
-
-
-        $(document).ready(function(){
-            $('#content').on('click', '#runInsert', function(){
+        $(document).ready(function() {
+            $('#content').on('click', '#runInsert', function() {
                 var chosenTable = "original";
                 var data = {};
 
-                $('#inputContainer .input-group').each(function(index){
+                $('#inputContainer .input-group').each(function(index) {
                     var tableName = $('#tableDropdownButton').text().toLowerCase();
                     var trajectoryID = $('#trajectoryID').val();
                     var longitude = $(this).find('.longitude').val();
@@ -164,7 +154,7 @@
                 });
             });
 
-            $('#content').on('click', '#runRangeQuery', function(){ 
+            $('#content').on('click', '#runRangeQuery', function() { 
                 var data = {};
                 var db_table = $('#tableDropdownButton').text().toLowerCase();
                 data["db_table"] = db_table;
@@ -197,13 +187,7 @@
                             contentType: 'application/json',
                             data: JSON.stringify(data),
                             success: function(response) {
-                                console.log('Successfully got:', response);
-                                var locations = response.response_trajectory[0].locations;
-
-                                locations.forEach(location => {
-                                    var marker = L.marker([location.latitude, location.longitude]).addTo(map);
-                                    marker.bindPopup(`<b>${location.timestamp}</b><br>Long: ${location.longitude} Lat: ${location.latitude}.`).openPopup();
-                                });
+                                console.log('Successfully got:', response.response_trajectory);
                             },
                             error: function(error) {
                                 console.error('Error getting trajectory data:', error);
@@ -217,32 +201,38 @@
             });
 
             $(".dropdown-item").click(function() {
+                var selectedDropdownItemID = $(this).attr('id');
                 var selectedDropdownItem = $(this).text();
 
-                var selectedDropdownItemID = $(this).attr('id');
-
-                if (selectedDropdownItemID === "insertEndpoint" || selectedDropdownItemID === "rangeQueryEndpoint") {
+                if(["insert_endpoint", "range_query_endpoint", "knn_endpoint", "visualize", "reset_db"].includes(selectedDropdownItemID)) {
                     $("#endpointDropdownButton").text(selectedDropdownItem);
+                    $('#map').css("display", "none");
+
+                    if(["insert_endpoint", "range_query_endpoint", "knn_endpoint"].includes(selectedDropdownItemID)) {
+                        $('#tableDropdownButton').css("display", "block");
+                    }
+                    else {
+                        $('#tableDropdownButton').css("display", "none");
+                    }
                 }
-                
-                if (selectedDropdownItemID === "originalTable" || selectedDropdownItemID === "simplifiedTable") {
+                else if(["original_table", "simplified_table"].includes(selectedDropdownItemID)) {
                     $("#tableDropdownButton").text(selectedDropdownItem);
                 }
             });
 
-            $('#originalTable').click(function() {
+            $('#original_table').click(function() {
                 chosenTable = "original";
                 var selectedDropdownItem = $(this).text();
                 $("tableDropdownButton").text(selectedDropdownItem);
             });
 
-            $('#simplifiedTable').click(function() {
+            $('#simplified_table').click(function() {
                 chosenTable = "simplified";
                 var selectedDropdownItem = $(this).text();
                 $("tableDropdownButton").text(selectedDropdownItem);
             });
 
-            $('#insertEndpoint').click(function(){
+            $('#insert_endpoint').click(function() {
                 var html = `
                     <button type="button" class="btn btn-primary" id="runInsert">Run</button>
                     <input type="number" aria-label="trajectory ID" id="trajectoryID">
@@ -263,7 +253,7 @@
                 $('#content').html(html);
             });
 
-            $('#rangeQueryEndpoint').click(function(){
+            $('#range_query_endpoint').click(function() {
                 var html = `
                     <button type="button" class="btn btn-primary" id="runRangeQuery">Run</button>
                     <div class="mb-3">
@@ -294,7 +284,7 @@
                 $('#content').html(html);
             });
 
-            $('#knnEndpoint').click(function(){
+            $('#knn_endpoint').click(function() {
                 var html = `
                     <button type="button" class="btn btn-primary" id="run_KNN">Run</button>
                     <div class="mb-3">
@@ -321,7 +311,7 @@
                 $('#content').html(html);
             });
 
-            $('#visualize').click(function(){
+            $('#visualize').click(function() {
                 var html = `
                     <button type="button" class="btn btn-primary" id="visualize_all_days_for_id_btn">Visualize all days</button>
                     <div class="mb-3">
@@ -331,6 +321,13 @@
                         <input type="text" id="date_picker" class="form-control" aria-label="Timestamp" placeholder="Enter a valid ID">
                         <div class="spinner-border text-primary" id="visualization_spinner" role="status" style="display: none"></div>
                     </div>  
+                `;
+                $('#content').html(html);
+            });
+
+            $('#reset_db').click(function() {
+                var html = ` 
+                    <button type="button" class="btn btn-primary" id="run_reset_db_btn">Reset Database</button>
                 `;
                 $('#content').html(html);
             });
@@ -381,7 +378,6 @@
                         altFormat: "F j, Y",
                         defaultDate: dates_with_data[0],
                         onChange: function(selectedDates, dateStr, instance) {
-                            console.log("Selected Date:", dateStr);
                             resetMap();
                             $('#visualization_spinner').css("display", "block");
                             
@@ -449,7 +445,7 @@
                 }; 
             });
 
-            $('#content').on('click', '.deleteInput', function(){
+            $('#content').on('click', '.deleteInput', function() {
                 $(this).closest('.input-group').remove();
             });
 
@@ -542,7 +538,21 @@
                 });
             });
 
-            $('#content').on('click', '#run_KNN', function(){
+            $('#content').on('click', '#run_reset_db_btn', function() {
+                $.ajax({
+                    url: 'http://localhost:8080/reset',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    success: function(response) {
+                        console.log('Successful reset the db:', response);
+                    },
+                    error: function(error) {
+                        console.error('Error resetting the DB:', error);
+                    }
+                });
+            });
+
+            $('#content').on('click', '#run_KNN', function() {
                 var data = {
                     query_origin: {
                         x: parseFloat($('#knn_x').val()).toFixed(1),  
@@ -554,13 +564,13 @@
 
                 var timestamp_low = $('#timestamp_low').val();
                 var timestamp_high = $('#timestamp_high').val();
-
-                if(!isNaN(timestamp_low) && !isNaN(timestamp_high)) {
+                console.log(timestamp_low)
+                if(timestamp_low != '' && timestamp_high != '') {
                     data["query_origin"]["t_low"] = timestamp_low;
                     data["query_origin"]["t_high"] = timestamp_high;
                 }
 
-                console.log(JSON.stringify(data));
+                console.log(data);
                 
                 $.ajax({
                     url: 'http://localhost:8080/knn_query',
