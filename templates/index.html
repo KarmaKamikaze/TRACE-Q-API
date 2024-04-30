@@ -63,6 +63,7 @@
                     <div id="content">
 
                     </div>
+                    <div id="map" style="height: 400px;"></div>
                 </div>
             </div>
         </div>
@@ -73,85 +74,53 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        function addDateDropdownClickListener() {
-            const dropdownMenu = document.getElementById('dateDropdown');
-            if (dropdownMenu) {
-                dropdownMenu.querySelectorAll('li').forEach((item) => { 
-                    item.addEventListener('click', function(event) { 
-                        event.preventDefault();
-                        L.map('map').remove();
-                        var map = L.map('map').setView([39.71923, 116.78379], 13);
+        var iconSize = [13, 20];
+        var iconAnchor = [3, 10];
+        var popupAnchor = [1, -16];
 
-                        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                            maxZoom: 19,
-                            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                        }).addTo(map);
+        var originalIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: iconSize,
+            iconAnchor: iconAnchor,
+            popupAnchor: popupAnchor,
+            shadowSize: [0, 0]
+        });
 
-                        var selectedDate = event.target.textContent.trim();
+        var simplifiedIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: iconSize,
+            iconAnchor: iconAnchor,
+            popupAnchor: popupAnchor,
+            shadowSize: [0, 0]
+        });
 
-                        var original_data_request_body = {
-                            id: Number($('#trajectory_id').val()),
-                            db_table: "original"
-                        };
+        var map = L.map('map').setView([39.71923, 116.78379], 13);
 
-                        $.ajax({
-                            url: 'http://localhost:8080/load_from_id',
-                            type: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify(original_data_request_body),
-                            success: function(response) {
-                                console.log('Successfully got:', response);
-                                var locations = response.response_trajectory[0].locations;
+        function resetMap() {
+            map.eachLayer(function (layer) {
+                map.removeLayer(layer);
+            });
 
-                                locations.forEach(location => {
-                                    var timestamp = new Date(0);
-                                    timestamp.setUTCSeconds(Number(location.timestamp));
-                                    var date = `${timestamp.getDate()}-${timestamp.getMonth()}-${timestamp.getFullYear()}`;
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
 
-                                    if(date === selectedDate) {
-                                        var marker = L.marker([location.latitude, location.longitude]).addTo(map);
-                                        marker.bindPopup(`<b>${timestamp}</b><br>Long: ${location.longitude} Lat: ${location.latitude}.`).openPopup();
-                                    }
-                                });
-                            },
-                            error: function(error) {
-                                console.error('Error getting original trajectory data:', error);
-                            }
-                        });
-
-                        var simplified_data_request_body = {
-                            id: Number($('#trajectory_id').val()),
-                            db_table: "simplified"
-                        };
-
-                        $.ajax({
-                            url: 'http://localhost:8080/load_from_id',
-                            type: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify(simplified_data_request_body),
-                            success: function(response) {
-                                console.log('Successfully got:', response);
-                                var locations = response.response_trajectory[0].locations;
-
-                                locations.forEach(location => {
-                                    var timestamp = new Date(0);
-                                    timestamp.setUTCSeconds(Number(location.timestamp));
-                                    var date = `${timestamp.getDate()}-${timestamp.getMonth()}-${timestamp.getFullYear()}`;
-
-                                    if(date === selectedDate) {
-                                        var marker = L.marker([location.latitude, location.longitude]).addTo(map);
-                                        marker.bindPopup(`<b>${timestamp}</b><br>Long: ${location.longitude} Lat: ${location.latitude}.`).openPopup();
-                                    }
-                                });
-                            },
-                            error: function(error) {
-                                console.error('Error getting simplified trajectory data:', error);
-                            }
-                        });
-                    });
-                });
-            }
+            map.setView([39.71923, 116.78379], 13);
         }
+
+        function connectTheDots(data){
+            var c = [];
+            for(i in data._layers) {
+                var x = data._layers[i]._latlng.lat;
+                var y = data._layers[i]._latlng.lng;
+                c.push([x, y]);
+            }
+            return c;
+        }
+
 
         $(document).ready(function(){
             $('#content').on('click', '#runInsert', function(){
@@ -354,18 +323,19 @@
 
             $('#visualize').click(function(){
                 var html = `
-                    <button type="button" class="btn btn-primary" id="visualize_btn">Visualize</button>
+                    <button type="button" class="btn btn-primary" id="visualize_all_days_for_id_btn">Visualize all days</button>
                     <div class="mb-3">
                         <label for="trajectory_id" class="form-label">Trajectory ID</label>
                         <input type="number" class="form-control" id="trajectory_id" placeholder="Enter trajectory ID">
-                        <input type="text" id="datePicker" class="form-control" aria-label="Timestamp" style="display:none">
-                    </div>
-                    <div id="map" style="height: 400px;"></div>
+                        <label for="date_picker" class="form-label">(Optional) Select a specific date
+                        <input type="text" id="date_picker" class="form-control" aria-label="Timestamp" placeholder="Enter a valid ID">
+                        <div class="spinner-border text-primary" id="visualization_spinner" role="status" style="display: none"></div>
+                    </div>  
                 `;
                 $('#content').html(html);
             });
 
-            $('#content').on('click', '#addInput', function(){
+            $('#content').on('click', '#addInput', function() {
                 var newInputGroup = `
                     <div class="input-group mb-3">
                         <input type="text" placeholder="longitude" aria-label="Longitude" class="form-control longitude">
@@ -377,18 +347,122 @@
                 $('#inputContainer').append(newInputGroup);
             });
 
+            $('#content').on('change', '#trajectory_id', function() {
+                var dates_with_data = [];
+
+                trajectory_id = Number($('#trajectory_id').val());
+                var dates_from_id_request_body = {
+                    id: trajectory_id
+                };
+
+                $.ajax({
+                    url: 'http://localhost:8080/get_dates_from_id',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(dates_from_id_request_body),
+                    success: function(response) {
+                        console.log('Successfully got:', response);
+                        response.dates.forEach(date => {
+                            dates_with_data.push(date);
+                        });
+                        initializeFlatpickr();
+                    },
+                    error: function(error) {
+                        console.error('Error getting dates from id:', error);
+                        return;
+                    }
+                });
+
+                var initializeFlatpickr = function() {
+                    flatpickr("#date_picker", {
+                        enable: dates_with_data,
+                        dateFormat: "Y-m-d",
+                        altInput: true,
+                        altFormat: "F j, Y",
+                        defaultDate: dates_with_data[0],
+                        onChange: function(selectedDates, dateStr, instance) {
+                            console.log("Selected Date:", dateStr);
+                            resetMap();
+                            $('#visualization_spinner').css("display", "block");
+                            
+                            var data = {
+                                id: trajectory_id,
+                                date: dateStr
+                            }
+
+                            $.ajax({
+                                url: 'http://localhost:8080/load_from_id_date',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                data: JSON.stringify(data),
+                                success: function(response) {
+                                    console.log('Successfully got from ID and date:', response);
+                                    
+                                    var original_locations = response.original_trajectory.locations;
+                                    var simplified_locations = response.simplified_trajectory.locations;
+                      
+                                    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                        maxZoom: 19,
+                                        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                                    }).addTo(map);
+
+                                    original_locations.forEach((location, index) => {
+                                        var marker = L.marker([location.latitude, location.longitude], {icon: originalIcon}).addTo(map);
+                                        var timestamp = new Date(0);
+                                        timestamp.setUTCSeconds(Number(location.timestamp));
+                                        marker.bindPopup(`<b>Original: ${timestamp}</b><br>Long: ${location.longitude} Lat: ${location.latitude}.`).openPopup();
+                                        
+                                        if (index < original_locations.length - 1) {
+                                            var nextLocation = original_locations[index + 1];
+                                            var latlngs = [
+                                                [location.latitude, location.longitude],
+                                                [nextLocation.latitude, nextLocation.longitude]
+                                            ];
+                                            var polyline = L.polyline(latlngs, {color: 'blue'}).addTo(map);
+                                        }
+                                    });
+
+                                    simplified_locations.forEach((location, index) => {
+                                        var marker = L.marker([location.latitude, location.longitude], {icon: simplifiedIcon}).addTo(map);
+                                        var timestamp = new Date(0);
+                                        timestamp.setUTCSeconds(Number(location.timestamp));
+                                        marker.bindPopup(`<b>Simplified: ${timestamp}</b><br>Long: ${location.longitude} Lat: ${location.latitude}.`).openPopup();
+                                        
+                                        if (index < simplified_locations.length - 1) {
+                                            var nextLocation = simplified_locations[index + 1];
+                                            var latlngs = [
+                                                [location.latitude, location.longitude],
+                                                [nextLocation.latitude, nextLocation.longitude]
+                                            ];
+                                            var polyline = L.polyline(latlngs, {color: 'orange'}).addTo(map);
+                                        }
+                                    });
+                                    $('#visualization_spinner').css("display", "none");
+                                },
+                                error: function(error) {
+                                    console.error('Error getting data from ID and date:', error);
+                                    $('#visualization_spinner').css("display", "none");
+                                }
+                            });
+                        }
+                    });
+                }; 
+            });
+
             $('#content').on('click', '.deleteInput', function(){
                 $(this).closest('.input-group').remove();
             });
 
-            $('#content').on('click', '#visualize_btn', function() {
+            $('#content').on('click', '#visualize_all_days_for_id_btn', function() {
                 var trajectory_id = $('#trajectory_id').val();
                 if(!trajectory_id.trim().length) {
                     alert("Trajectory ID cannot be an empty value");
                     return;
                 }
 
-                var map = L.map('map').setView([39.71923, 116.78379], 13);
+                $('#visualization_spinner').css("display", "block");
+
+                var trajectory_id = Number($('#trajectory_id').val());
 
                 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 19,
@@ -396,11 +470,9 @@
                 }).addTo(map);
 
                 var original_data_request_body = {
-                    id: Number($('#trajectory_id').val()),
+                    id: trajectory_id,
                     db_table: "original"
                 }
-                
-                var dates_with_data = [];
 
                 $.ajax({
                     url: 'http://localhost:8080/load_from_id',
@@ -409,39 +481,33 @@
                     data: JSON.stringify(original_data_request_body),
                     success: function(response) {
                         console.log('Successfully got:', response);
-                        var locations = response.response_trajectory[0].locations;
-                        locations.forEach(location => {
-                            var marker = L.marker([location.latitude, location.longitude]).addTo(map);
+                        var original_locations = response.response_trajectory.locations;
+                        original_locations.forEach((location, index) => {
+                            var marker = L.marker([location.latitude, location.longitude], {icon: originalIcon}).addTo(map);
                             var timestamp = new Date(0);
                             timestamp.setUTCSeconds(Number(location.timestamp));
                             marker.bindPopup(`<b>${timestamp}</b><br>Long: ${location.longitude} Lat: ${location.latitude}.`).openPopup();
-                            var ul = document.getElementById("dateDropdown")
-                            var li = document.createElement("li");
-                            var date = `${timestamp.getFullYear()}-${timestamp.getMonth() + 1}-${timestamp.getDate()}}`;
-                            if(!dates_with_data.includes(date)) {
-                                dates_with_data.push(date);
+
+                            if (index < original_locations.length - 1) {
+                                var nextLocation = original_locations[index + 1];
+                                var latlngs = [
+                                    [location.latitude, location.longitude],
+                                    [nextLocation.latitude, nextLocation.longitude]
+                                ];
+                                var polyline = L.polyline(latlngs, {color: 'blue'}).addTo(map);
                             }
                         });
-                        initializeFlatpickr();
                     },
                     error: function(error) {
                         console.error('Error getting original trajectory data:', error);
+                        $('#visualization_spinner').css("display", "none");
                     }
                 });
 
                 var simplified_data_request_body = {
-                    id: Number($('#trajectory_id').val()),
+                    id: trajectory_id,
                     db_table: "simplified"
                 }
-
-                var orangeIcon = new L.Icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
-                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41],
-                    popupAnchor: [1, -34],
-                    shadowSize: [41, 41]
-                });
 
                 $.ajax({
                     url: 'http://localhost:8080/load_from_id',
@@ -450,34 +516,30 @@
                     data: JSON.stringify(simplified_data_request_body),
                     success: function(response) {
                         console.log('Successfully got:', response);
-                        var locations = response.response_trajectory[0].locations;
+                        var locations = response.response_trajectory.locations;
 
-                        locations.forEach(location => {
-                            var marker = L.marker([location.latitude, location.longitude], {icon: orangeIcon}).addTo(map);
+                        locations.forEach((location, index) => {
+                            var marker = L.marker([location.latitude, location.longitude], {icon: simplifiedIcon}).addTo(map);
                             var timestamp = new Date(0);
                             timestamp.setUTCSeconds(Number(location.timestamp));
                             marker.bindPopup(`<b>${timestamp}</b><br>Long: ${location.longitude} Lat: ${location.latitude}.`).openPopup();
+
+                            if (index < locations.length - 1) {
+                                var nextLocation = locations[index + 1];
+                                var latlngs = [
+                                    [location.latitude, location.longitude],
+                                    [nextLocation.latitude, nextLocation.longitude]
+                                ];
+                                var polyline = L.polyline(latlngs, {color: 'orange'}).addTo(map);
+                            }
                         });
+                        $('#visualization_spinner').css("display", "none");
                     },
                     error: function(error) {
                         console.error('Error getting simplified trajectory data:', error);
+                        $('#visualization_spinner').css("display", "none");
                     }
                 });
-
-                var initializeFlatpickr = function() {
-                    flatpickr("#datePicker", {
-                        enable: dates_with_data,
-                        dateFormat: "Y-m-d",
-                        altInput: true,
-                        altFormat: "F j, Y",
-                        defaultDate: dates_with_data[0],
-                        onChange: function(selectedDates, dateStr, instance) {
-                            console.log("Selected Date:", dateStr);
-                        }
-                    });
-
-                    $("#datePicker").style.display = "block";
-                };
             });
 
             $('#content').on('click', '#run_KNN', function(){
