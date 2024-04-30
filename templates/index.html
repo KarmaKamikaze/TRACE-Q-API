@@ -284,14 +284,44 @@
                         <input type="number" class="form-control" id="resolutionScale" value="2.0">
                     </div>
                     <div class="mb-2">
-                        <label for="minQueryAccuracy" class="form-label">Min query accuracy</label>
-                        <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#minQueryAccCollapse" aria-expanded="false" aria-controls="minQueryAccCollapse">Info</button>
-                        <div class="collapse" id="minQueryAccCollapse">
+                        <label for="minRangeQueryAccuracy" class="form-label">Min query accuracy</label>
+                        <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#minRangeQueryAccCollapse" aria-expanded="false" aria-controls="minRangeQueryAccCollapse">Info</button>
+                        <div class="collapse" id="minRangeQueryAccCollapse">
                             <div class="card card-body">
                                 The minimum query accuracy that the simplification method must uphold.
                             </div>
                         </div>
-                        <input type="number" class="form-control" id="minQueryAccuracy" value="0.95">
+                        <input type="number" class="form-control" id="minRangeQueryAccuracy" value="0.95">
+                    </div>
+                     <div class="mb-2">
+                        <label for="minKnnQueryAccuracy" class="form-label">Min query accuracy</label>
+                        <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#minKnnQueryAccCollapse" aria-expanded="false" aria-controls="minKnnQueryAccCollapse">Info</button>
+                        <div class="collapse" id="minKnnQueryAccCollapse">
+                            <div class="card card-body">
+                                The minimum query accuracy that the simplification method must uphold.
+                            </div>
+                        </div>
+                        <input type="number" class="form-control" id="minKnnQueryAccuracy" value="0.95">
+                    </div>
+                     <div class="mb-2">
+                        <label for="maxTrajectoriesInBatch" class="form-label">Max trajectories in batch</label>
+                        <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#maxTrajectoriesInBatchCollapse" aria-expanded="false" aria-controls="maxTrajectoriesInBatchCollapse">Info</button>
+                        <div class="collapse" id="maxTrajectoriesInBatchCollapse">
+                            <div class="card card-body">
+                                The minimum query accuracy that the simplification method must uphold.
+                            </div>
+                        </div>
+                        <input type="number" class="form-control" id="maxTrajectoriesInBatch" value="8">
+                    </div>
+                     <div class="mb-2">
+                        <label for="maxThreads" class="form-label">Max threads</label>
+                        <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#maxThreadsCollapse" aria-expanded="false" aria-controls="maxThreadsCollapse">Info</button>
+                        <div class="collapse" id="maxThreadsCollapse">
+                            <div class="card card-body">
+                                The minimum query accuracy that the simplification method must uphold.
+                            </div>
+                        </div>
+                        <input type="number" class="form-control" id="maxThreads" value="50">
                     </div>
                     <div class="mb-2">
                         <label for="rangeQueryGridDensity" class="form-label">Range query grid density</label>
@@ -367,7 +397,7 @@
                                 than the allowed database connections.
                             </div>
                         </div>
-                        <input type="number" class="form-control" id="knnQueryTimeInterval" value="0.03">
+                        <input type="number" class="form-control" id="knnQueryTimeInterval" value="0.2">
                     </div>
                     <div class="mb-2">
                         <label for="knnK" class="form-label">KNN k</label>
@@ -379,6 +409,10 @@
                         </div>
                         <input type="number" class="form-control" id="knnK" value="10">
                     </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="useKNNForRangeQueryAccuracy" checked>
+                        <label class="form-check-label" for="useKNNForRangeQueryAccuracy">Use KNN for Range Query Accuracy</label>
+                    </div>
                     <button type="button" class="btn btn-primary" id="runSimplify">Simplify Trajectory</button>
                 `;
                 $('#content').html(html);
@@ -388,14 +422,18 @@
 
                 var requestBody = {
                     "resolution_scale": parseFloat($('#resolutionScale').val()),
-                    "min_query_accuracy": parseFloat($('#minQueryAccuracy').val()),
+                    "min_range_query_accuracy": parseFloat($('#minRangeQueryAccuracy').val()),
+                    "min_knn_query_accuracy": parseFloat($('#minKnnQueryAccuracy').val()),
+                    "max_trajectories_in_batch": parseInt($('#maxTrajectoriesInBatch').val()),
+                    "max_threads": parseInt($('#maxThreads').val()),
                     "range_query_grid_density": parseFloat($('#rangeQueryGridDensity').val()),
                     "knn_query_grid_density":  parseFloat($('#knnQueryGridDensity').val()),
                     "windows_per_grid_point": parseInt($('#windowsPerGridPoint').val()),
                     "window_expansion_rate": parseFloat($('#windowExpansionRate').val()),
                     "range_query_time_interval": parseFloat($('#rangeQueryTimeInterval').val()),
                     "knn_query_time_interval": parseFloat($('#knnQueryTimeInterval').val()),
-                    "knn_k": parseInt($('#knnK').val())
+                    "knn_k": parseInt($('#knnK').val()),
+                    "use_KNN_for_query_accuracy": Boolean($('#useKNNForRangeQueryAccuracy').prop('checked'))
                 };
 
                 console.log(JSON.stringify(requestBody));
