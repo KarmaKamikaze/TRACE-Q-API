@@ -206,13 +206,11 @@
                             chunkLines.forEach(function(line) {
                                 var parts = line.trim().split(',');
 
-                                // Check if the line has the expected number of fields
                                 if (parts.length === 4) {
                                     var timestamp = parts[1];
                                     var longitude = parseFloat(parts[2]);
                                     var latitude = parseFloat(parts[3]);
 
-                                    // Check if longitude and latitude are valid numbers
                                     if (!isNaN(longitude) && !isNaN(latitude)) {
                                         var location = {
                                             "timestamp": timestamp,
@@ -229,11 +227,10 @@
                                 }
                             });
 
-                            // Proceed with sending data only if locations array is not empty
                             if (locations.length > 0) {
                                 var jsonData = {
                                     "db_table": "original",
-                                    "id": idCounter.toString(), // Use the same ID for all chunks
+                                    "id": idCounter.toString(),
                                     "locations": locations
                                 };
 
@@ -256,7 +253,6 @@
                             }
                         }
 
-                        // Process each chunk sequentially
                         for (var i = 0; i < numChunks; i++) {
                             processChunk(i);
                         }
@@ -386,32 +382,20 @@
             });
 
             $('#content').on('click', '#runSimplify', function(){
-                console.log("entered");
-
-                var resolutionScale = parseFloat($('#resolutionScale').val()).toFixed(1);
-                var minQueryAccuracy = parseFloat($('#minQueryAccuracy').val()).toFixed(2);
-                var rangeQueryGridDensity = parseFloat($('#rangeQueryGridDensity').val()).toFixed(1);
-                var knnQueryGridDensity = parseFloat($('#knnQueryGridDensity').val()).toFixed(1);
-                var windowsPerGridPoint = parseInt($('#windowsPerGridPoint').val());
-                var windowExpansionRate = parseFloat($('#windowExpansionRate').val()).toFixed(1);
-                var rangeQueryTimeInterval = parseFloat($('#rangeQueryTimeInterval').val()).toFixed(1);
-                var knnQueryTimeInterval = parseFloat($('#knnQueryTimeInterval').val()).toFixed(2);
-                var knnK = parseInt($('#knnK').val());
 
                 var requestBody = {
-
-                    "resolution_scale": resolutionScale,
-                    "min_query_accuracy": minQueryAccuracy,
-                    "range_query_grid_density": rangeQueryGridDensity,
-                    "knn_query_grid_density": knnQueryGridDensity,
-                    "windows_per_grid_point": windowsPerGridPoint,
-                    "window_expansion_rate": windowExpansionRate,
-                    "range_query_time_interval": rangeQueryTimeInterval,
-                    "knn_query_time_interval": knnQueryTimeInterval,
-                    "knn_k": knnK
+                    "resolution_scale": parseFloat($('#resolutionScale').val()),
+                    "min_query_accuracy": parseFloat($('#minQueryAccuracy').val()),
+                    "range_query_grid_density": parseFloat($('#rangeQueryGridDensity').val()),
+                    "knn_query_grid_density":  parseFloat($('#knnQueryGridDensity').val()),
+                    "windows_per_grid_point": parseInt($('#windowsPerGridPoint').val()),
+                    "window_expansion_rate": parseFloat($('#windowExpansionRate').val()),
+                    "range_query_time_interval": parseFloat($('#rangeQueryTimeInterval').val()),
+                    "knn_query_time_interval": parseFloat($('#knnQueryTimeInterval').val()),
+                    "knn_k": parseInt($('#knnK').val())
                 };
-                console.log(requestBody);
 
+                console.log(JSON.stringify(requestBody));
                 console.log("before post");
                 $.ajax({
                     url: 'http://localhost:8080/run',
@@ -424,7 +408,6 @@
                     error: function(xhr, status, error) {
                         console.log(xhr);
                         console.log(status);
-                        console.log(error);
                         console.error('Error making the simplification:', error);
                     }
 
