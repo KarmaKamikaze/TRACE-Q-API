@@ -63,7 +63,7 @@
 
                     if(!data["locations"])
                         data["locations"] = [];
-
+ 
                     data["locations"].push({
                         timestamp: timestamp,
                         longitude: parseFloat(longitude), 
@@ -85,7 +85,7 @@
                 });
             });
 
-            $('#content').on('click', '#runQuery', function(){ 
+            $('#content').on('click', '#runRangeQuery', function(){ 
                 var data = {};
 
                 data["db_table"] = $('#tableDropdownButton').text().toLowerCase();
@@ -428,6 +428,10 @@
                         </ul>
                     </div>
                     <button type="button" class="btn btn-primary" id="runQuery">Run Query</button>
+    
+            $('#rangeQueryEndpoint').click(function(){
+                var html = `
+                    <button type="button" class="btn btn-primary" id="runRangeQuery">Run</button>
                     <div class="mb-3">
                         <label for="longitudeMin" class="form-label">Longitude Min</label>
                         <input type="number" class="form-control" id="longitudeMin" placeholder="Enter Min Longitude">
@@ -456,6 +460,33 @@
                 $('#content').html(html);
             });
 
+            $('#knnEndpoint').click(function(){
+                var html = `
+                    <button type="button" class="btn btn-primary" id="run_KNN">Run</button>
+                    <div class="mb-3">
+                        <label for="knn_k" class="form-label">K</label>
+                        <input type="number" class="form-control" id="knn_k" placeholder="Enter K">
+                    </div>
+                    <div class="mb-3">
+                        <label for="knn_x" class="form-label">X</label>
+                        <input type="number" class="form-control" id="knn_x" placeholder="Enter X">
+                    </div>
+                    <div class="mb-3">
+                        <label for="knn_y" class="form-label">Y</label>
+                        <input type="number" class="form-control" id="knn_y" placeholder="Enter Y">
+                    </div>
+                    <div class="mb-3">
+                        <label for="timestamp_low" class="form-label">(Optional) Timestamp Low</label>
+                        <input type="datetime-local" aria-label="timestamp_low" id="timestamp_low" class="form-control timestamp_low" step="1">
+                    </div>
+                    <div class="mb-3">
+                        <label for="timestamp_high" class="form-label">(Optional) Timestamp High</label>
+                        <input type="datetime-local" aria-label="Timestamp" id="timestamp_high" class="form-control timestamp_high" step="1">
+                    </div>
+                `;
+                $('#content').html(html);
+            });
+
             var inputCount = 1;
             $('#content').on('click', '#addInput', function(){
                 var newInputGroup = `
@@ -473,7 +504,7 @@
                 $(this).closest('.input-group').remove();
             });
 
-            $('#content').on('click', '#runQuery', function(){
+            $('#content').on('click', '#runRangeQuery', function(){
                 var longitudeMin = $('#longitudeMin').val();
                 var longitudeMax = $('#longitudeMax').val();
                 var latitudeMin = $('#latitudeMin').val();
@@ -482,7 +513,39 @@
                 var timestampMax = $('#timestampMax').val();
             });
 
+            $('#content').on('click', '#run_KNN', function(){
+                var data = {
+                    query_origin: {
+                        x: parseFloat($('#knn_x').val()).toFixed(1),  
+                        y: parseFloat($('#knn_y').val()).toFixed(1)
+                    },
+                    db_table: $('#tableDropdownButton').text().toLowerCase(),
+                    k: parseInt($('#knn_k').val(), 10)
+                };
 
+                var timestamp_low = $('#timestamp_low').val();
+                var timestamp_high = $('#timestamp_high').val();
+
+                if(!isNaN(timestamp_low) && !isNaN(timestamp_high)) {
+                    data["query_origin"]["t_low"] = timestamp_low;
+                    data["query_origin"]["t_high"] = timestamp_high;
+                }
+
+                console.log(JSON.stringify(data));
+                
+                $.ajax({
+                    url: 'http://localhost:8080/knn_query',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function(response) {
+                        console.log('Successful KNN query:', response);
+                    },
+                    error: function(error) {
+                        console.error('Error making KNN query:', error);
+                    }
+                });
+            });
         });
         </script>
 </body>
