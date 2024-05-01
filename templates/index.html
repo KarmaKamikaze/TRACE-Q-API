@@ -112,7 +112,6 @@
 
         $(document).ready(function() {
             $('#content').on('click', '#runInsert', function() {
-                var chosenTable = "original";
                 var data = {};
 
                 $('#inputContainer .input-group').each(function(index) {
@@ -128,8 +127,8 @@
                     var latitude = $(this).find('.latitude').val();
                     var timestamp = $(this).find('.timestamp').val().replace("T", " ");
 
-                    if(!data["table"])
-                        data["table"] = db_table;
+                    if(!data["db_table"])
+                        data["db_table"] = db_table;
 
                     if(!data["id"])
                         data["id"] = trajectoryID
