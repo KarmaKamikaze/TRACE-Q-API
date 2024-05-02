@@ -1,40 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Trace-Q</title>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossorigin=""></script>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    </head>
-    <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
-            <a class="navbar-brand" href="#">Trace-Q</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
-                <ul class="navbar-nav">
-                <li class="nav-item dropdown">
-                    <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    Dropdown
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-dark">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trace-Q</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Trace-Q</a>
+        </div>
+      </nav>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <h1>Trace-Q trajectory simplifier</h1>
+                <div class="dropdown">
+                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="insertEndpoint" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Insert Trajectory</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="simplifyEndpoint" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Simplify</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="rangeQueryEndpoint" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Query</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="knnEndpoint" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">KNN</button>
+                        </li>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="visualize" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Visualize</button>
+                        </li>
                     </ul>
-                </li>
-                </ul>
-            </div>
-            </div>
-        </nav>
+                </div>
 
         <div class="container mt-5">
             <div class="row">
@@ -66,7 +74,8 @@
                 </div>
             </div>
         </div>
-    </body>
+    </div>
+</body>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -209,6 +218,7 @@
                 });
             });
 
+
             $(".dropdown-item").click(function() {
                 var selectedDropdownItemID = $(this).attr('id');
                 var selectedDropdownItem = $(this).text();
@@ -243,26 +253,326 @@
 
             $('#insert_endpoint').click(function() {
                 var html = `
-                    <button type="button" class="btn btn-primary" id="runInsert">Run</button>
-                    <input type="number" aria-label="trajectory ID" id="trajectoryID">
-                    <div class="input-group mb-3 mt-2">
-                        <input type="file" class="form-control" id="inputGroupFile02">
-                        <label class="input-group-text" for="inputGroupFile02">Upload</label>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle mt-2 mb-2" id="tableDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Select a table
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" id="originalTable">Original</a></li>
+                             <li><a class="dropdown-item" href="#" id="simplifiedTable">Simplified</a></li>
+                        </ul>
                     </div>
-                    <div id="inputContainer">
-                        <button id="addInput" class="btn btn-primary">Add trajectory</button>
-                        <div class="input-group mb-3 mt-2">
-                            <input type="text" placeholder="longitude" aria-label="Longitude" class="form-control longitude">
-                            <input type="text" placeholder="latitude" aria-label="Latitude" class="form-control latitude">
-                            <input type="datetime-local" aria-label="Timestamp" class="form-control timestamp" step="1">
-                        <button class="btn btn-danger deleteInput">Delete</button>
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            Upload file
+                        </div>
+                        <div class="card-body">
+                            <div class="input-group mb-3 mt-2">
+                                <input type="file" class="form-control" id="fileInput"><br>
+                                <button id="uploadButton" class="btn btn-primary rounded">Upload File</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            Insert Trajectory point by point
+                        </div>
+                        <div class="card-body mb-3">
+                            <div id="inputContainer">
+                                <button id="addInput" class="btn btn-primary">Add trajectory</button>
+                                <div class="input-group mb-3 mt-2">
+                                    <input type="text" placeholder="longitude" aria-label="Longitude" class="form-control longitude">
+                                    <input type="text" placeholder="latitude" aria-label="Latitude" class="form-control latitude">
+                                    <input type="datetime-local" aria-label="Timestamp" class="form-control timestamp" step="1">
+                                    <button class="btn btn-danger deleteInput">Delete</button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary mb-3" id="runInsert">Insert trajectory</button>
                         </div>
                     </div>
                 `;
                 $('#content').html(html);
             });
 
-            $('#range_query_endpoint').click(function() {
+
+            var idCounter = 0;
+            $('#content').on('click', '#uploadButton', function() {
+                var file = $('#fileInput')[0].files[0];
+                var tableName = $("#tableDropdownButton").text().toLowerCase();
+
+                if (file && tableName) {
+                    var reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        var text = e.target.result;
+                        var lines = text.split('\n');
+                        var chunkSize = 450;
+                        var numChunks = Math.ceil(lines.length / chunkSize);
+
+                        function processChunk(chunkIndex) {
+                            var start = chunkIndex * chunkSize;
+                            var end = Math.min(start + chunkSize, lines.length);
+                            var chunkLines = lines.slice(start, end);
+                            var locations = [];
+
+                            chunkLines.forEach(function(line) {
+                                var parts = line.trim().split(',');
+
+                                if (parts.length === 4) {
+                                    var timestamp = parts[1];
+                                    var longitude = parseFloat(parts[2]);
+                                    var latitude = parseFloat(parts[3]);
+
+                                    if (!isNaN(longitude) && !isNaN(latitude)) {
+                                        var location = {
+                                            "timestamp": timestamp,
+                                            "longitude": longitude,
+                                            "latitude": latitude
+                                        };
+
+                                        locations.push(location);
+                                    } else {
+                                        console.log('Invalid longitude or latitude:', line);
+                                    }
+                                } else {
+                                    console.log('Invalid line format:', line);
+                                }
+                            });
+
+                            if (locations.length > 0) {
+                                var jsonData = {
+                                    "db_table": "original",
+                                    "id": idCounter.toString(),
+                                    "locations": locations
+                                };
+
+                                console.log(jsonData);
+
+                                $.ajax({
+                                    url: 'http://localhost:8080/insert',
+                                    type: 'POST',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify(jsonData),
+                                    success: function(response) {
+                                        console.log('Data successfully sent for chunk ' + chunkIndex + ':', response);
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error('Error for chunk ' + chunkIndex + ':', error);
+                                    }
+                                });
+                            } else {
+                                console.log('No valid data to send for chunk ' + chunkIndex);
+                            }
+                        }
+
+                        for (var i = 0; i < numChunks; i++) {
+                            processChunk(i);
+                        }
+                    };
+
+                    reader.readAsText(file);
+                    idCounter++;
+                } else {
+                    alert('Please select a file and table name.');
+                }
+
+            });
+
+            $('#simplifyEndpoint').click(function (){
+                var html =`
+                      <div class="mb-2">
+                        <label for="resolutionScale" class="form-label">Resolution scale</label>
+                        <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#resScaleCollapse" aria-expanded="false" aria-controls="resScaleCollapse">Info</button>
+                        <div class="collapse" id="resScaleCollapse">
+                            <div class="card card-body">
+                                The resolution scale (called c in the MRPA paper) describes the number of the intermediate scale.
+                                The lower c is, the more error tolerances we will have; thereby we have more simplified trajectories
+                                to choose from. Additionally, the more error tolerances, the less the difference is between them.
+                            </div>
+                        </div>
+                        <input type="number" class="form-control" id="resolutionScale" value="2.0">
+                    </div>
+                    <div class="mb-2">
+                        <label for="minRangeQueryAccuracy" class="form-label">Min query accuracy</label>
+                        <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#minRangeQueryAccCollapse" aria-expanded="false" aria-controls="minRangeQueryAccCollapse">Info</button>
+                        <div class="collapse" id="minRangeQueryAccCollapse">
+                            <div class="card card-body">
+                                The minimum query accuracy that the simplification method must uphold.
+                            </div>
+                        </div>
+                        <input type="number" class="form-control" id="minRangeQueryAccuracy" value="0.95">
+                    </div>
+                     <div class="mb-2">
+                        <label for="minKnnQueryAccuracy" class="form-label">Min query accuracy</label>
+                        <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#minKnnQueryAccCollapse" aria-expanded="false" aria-controls="minKnnQueryAccCollapse">Info</button>
+                        <div class="collapse" id="minKnnQueryAccCollapse">
+                            <div class="card card-body">
+                                The minimum query accuracy that the simplification method must uphold.
+                            </div>
+                        </div>
+                        <input type="number" class="form-control" id="minKnnQueryAccuracy" value="0.95">
+                    </div>
+                     <div class="mb-2">
+                        <label for="maxTrajectoriesInBatch" class="form-label">Max trajectories in batch</label>
+                        <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#maxTrajectoriesInBatchCollapse" aria-expanded="false" aria-controls="maxTrajectoriesInBatchCollapse">Info</button>
+                        <div class="collapse" id="maxTrajectoriesInBatchCollapse">
+                            <div class="card card-body">
+                                The maximum number of trajectories per batch that is able to run concurrently due to database connections.
+                            </div>
+                        </div>
+                        <input type="number" class="form-control" id="maxTrajectoriesInBatch" value="8">
+                    </div>
+                     <div class="mb-2">
+                        <label for="maxThreads" class="form-label">Max threads</label>
+                        <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#maxThreadsCollapse" aria-expanded="false" aria-controls="maxThreadsCollapse">Info</button>
+                        <div class="collapse" id="maxThreadsCollapse">
+                            <div class="card card-body">
+                                The maximum amount of threads that are allowed to run database client connections to the PostgreSQL database.
+                            </div>
+                        </div>
+                        <input type="number" class="form-control" id="maxThreads" value="50">
+                    </div>
+                    <div class="mb-2">
+                        <label for="rangeQueryGridDensity" class="form-label">Range query grid density</label>
+                        <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#rangeQueryGridDenCollapse" aria-expanded="false" aria-controls="rangeQueryGridDenCollapse">Info</button>
+                        <div class="collapse" id="rangeQueryGridDenCollapse">
+                            <div class="card card-body">
+                                Factor describing how close points appear in the grid for range queries.
+                                Lower values cause points to be more densely packed, thus increasing the number of queries
+                                Possible values: 0.2, 0.05
+                            </div>
+                        </div>
+                        <input type="number" class="dropdown form-control" id="rangeQueryGridDensity" value="0.1">
+                    </div>
+                    <div class="mb-2">
+                        <label for="knnQueryGridDensity" class="form-label">KNN query grid density</label>
+                        <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#knnQueryGridDenCollapse" aria-expanded="false" aria-controls="knnQueryGridDenCollapse">Info</button>
+                        <div class="collapse" id="knnQueryGridDenCollapse">
+                            <div class="card card-body">
+                                Factor describing how close points appear in the grid for range queries.
+                                Lower values cause points to be more densely packed, thus increasing the number of queries
+                                Possible values: 0.2, 0.05
+                            </div>
+                        </div>
+                        <input type="number" class="form-control" id="knnQueryGridDensity" value="0.1">
+                    </div>
+                    <div class="mb-2">
+                        <label for="windowsPerGridPoint" class="form-label">Windows per grid point</label>
+                        <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#windowsPerGridPointCollapse" aria-expanded="false" aria-controls="windowsPerGridPointCollapse">Info</button>
+                        <div class="collapse" id="windowsPerGridPointCollapse">
+                            <div class="card card-body">
+                               Number of windows we will create for each grid point.
+                               Only relevant to range queries, as these use windows
+                               Increases to this value will increase the number of queries.
+                            </div>
+                        </div>
+                        <input type="number" class="form-control" id="windowsPerGridPoint" value="3">
+                    </div>
+                    <div class="mb-2">
+                            <label for="windowExpansionRate" class="form-label">Window expansion rate </label>
+                            <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#windowExpansionRateCollapse" aria-expanded="false" aria-controls="windowExpansionRateCollapse">Info</button>
+                        <div class="collapse" id="windowExpansionRateCollapse">
+                            <div class="card card-body">
+                                The factor which the different windows of a grid point will scale.
+                                This factor will be applied to the previous window's longitude and latitude to create the new window
+                                The first window will have longitude and latitude corresponding to the grid density multiplier.
+                                The first window for a grid point can also be smaller, i.e use the expansion rate reversely.
+                                Possible values: 1.3, 2
+                            </div>
+                        </div>
+                        <input type="number" class="form-control" id="windowExpansionRate" value="1.3">
+                    </div>
+                    <div class="mb-2">
+                        <label for="rangeQueryTimeInterval" class="form-label">Range Query Time Interval</label>
+                        <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#rangeQueryTimeIntervalCollapse" aria-expanded="false" aria-controls="rangeQueryTimeIntervalCollapse">Info</button>
+                        <div class="collapse" id="rangeQueryTimeIntervalCollapse">
+                            <div class="card card-body">
+                                The factor that will be used to scale time intervals for each window in range queries.
+                                Lower values will result in more queries.
+                                Possible values: 0.1, 1
+                            </div>
+                        </div>
+                        <input type="number" class="form-control" id="rangeQueryTimeInterval" value="0.2">
+                    </div>
+                    <div class="mb-2">
+                        <label for="knnQueryTimeInterval" class="form-label">KNN query time interval</label>
+                        <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#knnQueryTimeIntervalCollapse" aria-expanded="false" aria-controls="knnQueryTimeIntervalCollapse">Info</button>
+                        <div class="collapse" id="knnQueryTimeIntervalCollapse">
+                            <div class="card card-body">
+                                The factor that will be used to scale time intervals for each window in get_ids_from_knn queries.
+                                Lower values will result in more queries.
+                                Possible values: 0.1, 1
+                                Lowest allowed KNN time interval multiplier is 0.02, otherwise number of query time points would be larger
+                                than the allowed database connections.
+                            </div>
+                        </div>
+                        <input type="number" class="form-control" id="knnQueryTimeInterval" value="0.2">
+                    </div>
+                    <div class="mb-2">
+                        <label for="knnK" class="form-label">KNN k</label>
+                        <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#knnKCollapse" aria-expanded="false" aria-controls="knnKCollapse">Info</button>
+                        <div class="collapse" id="knnKCollapse">
+                            <div class="card card-body">
+                                Number of nearest neighbours to analyse.
+                            </div>
+                        </div>
+                        <input type="number" class="form-control" id="knnK" value="10">
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="useKNNForRangeQueryAccuracy" checked>
+                        <label class="form-check-label" for="useKNNForRangeQueryAccuracy">Use KNN for Range Query Accuracy</label>
+                        <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#knnKCollapse" aria-expanded="false" aria-controls="knnKCollapse">Info</button>
+                        <div class="collapse" id="knnKCollapse">
+                            <div class="card card-body">
+                                Decides whether KNN queries should be utilized for determining the query accuracy.
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary mb-3 mt-3" id="runSimplify">Simplify Trajectory</button>
+                `;
+                $('#content').html(html);
+            });
+
+            $('#content').on('click', '#runSimplify', function(){
+
+                var requestBody = {
+                    "resolution_scale": parseFloat($('#resolutionScale').val()),
+                    "min_range_query_accuracy": parseFloat($('#minRangeQueryAccuracy').val()),
+                    "min_knn_query_accuracy": parseFloat($('#minKnnQueryAccuracy').val()),
+                    "max_trajectories_in_batch": parseInt($('#maxTrajectoriesInBatch').val()),
+                    "max_threads": parseInt($('#maxThreads').val()),
+                    "range_query_grid_density": parseFloat($('#rangeQueryGridDensity').val()),
+                    "knn_query_grid_density":  parseFloat($('#knnQueryGridDensity').val()),
+                    "windows_per_grid_point": parseInt($('#windowsPerGridPoint').val()),
+                    "window_expansion_rate": parseFloat($('#windowExpansionRate').val()),
+                    "range_query_time_interval": parseFloat($('#rangeQueryTimeInterval').val()),
+                    "knn_query_time_interval": parseFloat($('#knnQueryTimeInterval').val()),
+                    "knn_k": parseInt($('#knnK').val()),
+                    "use_KNN_for_query_accuracy": Boolean($('#useKNNForRangeQueryAccuracy').prop('checked'))
+                };
+
+                console.log(JSON.stringify(requestBody));
+                console.log("before post");
+                $.ajax({
+                    url: 'http://localhost:8080/run',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(requestBody),
+                    success: function(response) {
+                        console.log('Successful simplification:', response);
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(xhr);
+                        console.log(status);
+                        console.error('Error making the simplification:', error);
+                    }
+
+                });
+
+            });
+
+
+            $('#rangeQueryEndpoint').click(function(){
                 var html = `
                     <button type="button" class="btn btn-primary" id="runRangeQuery">Run</button>
                     <div class="mb-3">
@@ -318,9 +628,10 @@
                     </div>
                 `;
                 $('#content').html(html);
+
             });
 
-            $('#visualize').click(function() {
+            $('#visualize').click(function(){
                 var html = `
                     <button type="button" class="btn btn-primary" id="visualize_all_days_for_id_btn">Visualize all days</button>
                     <div class="mb-3">
@@ -341,6 +652,7 @@
                 `;
                 $('#content').html(html);
             });
+
 
             $('#content').on('click', '#addInput', function() {
                 var newInputGroup = `
