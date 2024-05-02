@@ -44,9 +44,34 @@
                     </ul>
                 </div>
 
-                <div id="content"></div>
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-6 offset-md-3">
+                    <h1>Trace-Q trajectory simplifier</h1>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle mt-2" id="endpointDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Select an endpoint
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" id="insert_endpoint">Insert trajectory</a></li>
+                            <li><a class="dropdown-item" href="#" id="range_query_endpoint">Query</a></li>
+                            <li><a class="dropdown-item" href="#" id="knn_endpoint">KNN</a></li>
+                            <li><a class="dropdown-item" href="#" id="visualize">Visualize</a></li>
+                            <li><a class="dropdown-item" href="#" id="reset_db">Reset</a></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle mt-2 mb-2" id="tableDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">Select a table</button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" id="original_table">Original</a></li>
+                            <li><a class="dropdown-item" href="#" id="simplified_table">Simplified</a></li>
+                        </ul>
+                    </div>
+                    <div id="content">
 
-                <div id="map" style="height: 400px;"></div>
+                    </div>
+                    <div id="map" style="height: 400px; display: none;"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -94,31 +119,25 @@
             map.setView([39.71923, 116.78379], 13);
         }
 
-        function connectTheDots(data){
-            var c = [];
-            for(i in data._layers) {
-                var x = data._layers[i]._latlng.lat;
-                var y = data._layers[i]._latlng.lng;
-                c.push([x, y]);
-            }
-            return c;
-        }
-
-
-        $(document).ready(function(){
-            $('#content').on('click', '#runInsert', function(){
-                var chosenTable = "original";
+        $(document).ready(function() {
+            $('#content').on('click', '#runInsert', function() {
                 var data = {};
 
-                $('#inputContainer .input-group').each(function(index){
-                    var tableName = $('#tableDropdownButton').text().toLowerCase();
+                $('#inputContainer .input-group').each(function(index) {
+                    var db_table = $('#tableDropdownButton').text().toLowerCase();
+
+                    if(db_table == "select a table") {
+                        alert("Please select a table");
+                        return;
+                    }
+
                     var trajectoryID = $('#trajectoryID').val();
                     var longitude = $(this).find('.longitude').val();
                     var latitude = $(this).find('.latitude').val();
                     var timestamp = $(this).find('.timestamp').val().replace("T", " ");
 
-                    if(!data["table"])
-                        data["table"] = tableName;
+                    if(!data["db_table"])
+                        data["db_table"] = db_table;
 
                     if(!data["id"])
                         data["id"] = trajectoryID
@@ -147,9 +166,15 @@
                 });
             });
 
-            $('#content').on('click', '#runRangeQuery', function(){ 
+            $('#content').on('click', '#runRangeQuery', function() { 
                 var data = {};
                 var db_table = $('#tableDropdownButton').text().toLowerCase();
+
+                if(db_table == "select a table") {
+                    alert("Please select a table");
+                    return;
+                }
+
                 data["db_table"] = db_table;
 
                 data["longitudeMin"] = $('#longitudeMin').val();
@@ -180,13 +205,7 @@
                             contentType: 'application/json',
                             data: JSON.stringify(data),
                             success: function(response) {
-                                console.log('Successfully got:', response);
-                                var locations = response.response_trajectory[0].locations;
-
-                                locations.forEach(location => {
-                                    var marker = L.marker([location.latitude, location.longitude]).addTo(map);
-                                    marker.bindPopup(`<b>${location.timestamp}</b><br>Long: ${location.longitude} Lat: ${location.latitude}.`).openPopup();
-                                });
+                                console.log('Successfully got:', response.response_trajectory);
                             },
                             error: function(error) {
                                 console.error('Error getting trajectory data:', error);
@@ -201,33 +220,38 @@
 
 
             $(".dropdown-item").click(function() {
-
+                var selectedDropdownItemID = $(this).attr('id');
                 var selectedDropdownItem = $(this).text();
 
-                var selectedDropdownItemID = $(this).attr('id');
-
-                if (selectedDropdownItemID === "insertEndpoint" || selectedDropdownItemID === "rangeQueryEndpoint") {
+                if(["insert_endpoint", "range_query_endpoint", "knn_endpoint", "visualize", "reset_db"].includes(selectedDropdownItemID)) {
                     $("#endpointDropdownButton").text(selectedDropdownItem);
+                    $('#map').css("display", "none");
+
+                    if(["insert_endpoint", "range_query_endpoint", "knn_endpoint"].includes(selectedDropdownItemID)) {
+                        $('#tableDropdownButton').css("display", "block");
+                    }
+                    else {
+                        $('#tableDropdownButton').css("display", "none");
+                    }
                 }
-                
-                if (selectedDropdownItemID === "originalTable" || selectedDropdownItemID === "simplifiedTable") {
+                else if(["original_table", "simplified_table"].includes(selectedDropdownItemID)) {
                     $("#tableDropdownButton").text(selectedDropdownItem);
                 }
             });
 
-            $('#originalTable').click(function() {
+            $('#original_table').click(function() {
                 chosenTable = "original";
                 var selectedDropdownItem = $(this).text();
                 $("tableDropdownButton").text(selectedDropdownItem);
             });
 
-            $('#simplifiedTable').click(function() {
+            $('#simplified_table').click(function() {
                 chosenTable = "simplified";
                 var selectedDropdownItem = $(this).text();
                 $("tableDropdownButton").text(selectedDropdownItem);
             });
 
-            $('#insertEndpoint').click(function(){
+            $('#insert_endpoint').click(function() {
                 var html = `
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle mt-2 mb-2" id="tableDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -270,6 +294,7 @@
                 `;
                 $('#content').html(html);
             });
+
 
             var idCounter = 0;
             $('#content').on('click', '#uploadButton', function() {
@@ -589,33 +614,33 @@
                     <button type="button" class="btn btn-primary" id="runRangeQuery">Run</button>
                     <div class="mb-3">
                         <label for="longitudeMin" class="form-label">Longitude Min</label>
-                        <input type="number" class="form-control" id="longitudeMin" placeholder="Enter Min Longitude" value="1.1">
+                        <input type="number" class="form-control" id="longitudeMin" placeholder="Enter Min Longitude" min="0">
                     </div>
                     <div class="mb-3">
                         <label for="longitudeMax" class="form-label">Longitude Max</label>
-                        <input type="number" class="form-control" id="longitudeMax" placeholder="Enter Max Longitude" value="1000.1">
+                        <input type="number" class="form-control" id="longitudeMax" placeholder="Enter Max Longitude" min="0">
                     </div>
                     <div class="mb-3">
                         <label for="latitudeMin" class="form-label">Latitude Min</label>
-                        <input type="number" class="form-control" id="latitudeMin" placeholder="Enter Min Latitude" value="1.1">
+                        <input type="number" class="form-control" id="latitudeMin" placeholder="Enter Min Latitude" min="0">
                     </div>
                     <div class="mb-3">
                         <label for="latitudeMax" class="form-label">Latitude Max</label>
-                        <input type="number" class="form-control" id="latitudeMax" placeholder="Enter Max Latitude" value="1000.1">
+                        <input type="number" class="form-control" id="latitudeMax" placeholder="Enter Max Latitude" min="0">
                     </div>
                     <div class="mb-3">
                         <label for="timestampMin" class="form-label">Timestamp Min</label>
-                        <input type="datetime-local" aria-label="timestampMin" id="timestampMin" class="form-control timestampMin" step="1" value="2005-06-01T08:30">
+                        <input type="datetime-local" aria-label="timestampMin" id="timestampMin" class="form-control timestampMin" step="1" value="2008-01-01T00:00">
                     </div>
                     <div class="mb-3">
                         <label for="timestampMax" class="form-label">Timestamp Max</label>
-                        <input type="datetime-local" aria-label="Timestamp" id="timestampMax" class="form-control timestampMax" step="1" value="2023-06-01T08:30">
+                        <input type="datetime-local" aria-label="Timestamp" id="timestampMax" class="form-control timestampMax" step="1" value="2008-01-01T00:00">
                     </div>
                 `;
                 $('#content').html(html);
             });
 
-            $('#knnEndpoint').click(function(){
+            $('#knn_endpoint').click(function() {
                 var html = `
                     <button type="button" class="btn btn-primary" id="run_KNN">Run</button>
                     <div class="mb-3">
@@ -654,8 +679,17 @@
                         <div class="spinner-border text-primary" id="visualization_spinner" role="status" style="display: none"></div>
                     </div>  
                 `;
+                $('#map').css("display", "block")
                 $('#content').html(html);
             });
+
+            $('#reset_db').click(function() {
+                var html = ` 
+                    <button type="button" class="btn btn-primary" id="run_reset_db_btn">Reset Database</button>
+                `;
+                $('#content').html(html);
+            });
+
 
             $('#content').on('click', '#addInput', function() {
                 var newInputGroup = `
@@ -703,7 +737,6 @@
                         altFormat: "F j, Y",
                         defaultDate: dates_with_data[0],
                         onChange: function(selectedDates, dateStr, instance) {
-                            console.log("Selected Date:", dateStr);
                             resetMap();
                             $('#visualization_spinner').css("display", "block");
                             
@@ -771,7 +804,7 @@
                 }; 
             });
 
-            $('#content').on('click', '.deleteInput', function(){
+            $('#content').on('click', '.deleteInput', function() {
                 $(this).closest('.input-group').remove();
             });
 
@@ -864,25 +897,46 @@
                 });
             });
 
-            $('#content').on('click', '#run_KNN', function(){
+            $('#content').on('click', '#run_reset_db_btn', function() {
+                $.ajax({
+                    url: 'http://localhost:8080/reset',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    success: function(response) {
+                        console.log('Successful reset the db:', response);
+                    },
+                    error: function(error) {
+                        console.error('Error resetting the DB:', error);
+                    }
+                });
+            });
+
+            $('#content').on('click', '#run_KNN', function() {
+                var db_table = $('#tableDropdownButton').text().toLowerCase();
+
+                if(db_table == "select a table") {
+                    alert("Please select a table");
+                    return;
+                }
+
                 var data = {
                     query_origin: {
-                        x: parseFloat($('#knn_x').val()).toFixed(1),  
-                        y: parseFloat($('#knn_y').val()).toFixed(1)
+                        x: parseFloat($('#knn_x').val()),  
+                        y: parseFloat($('#knn_y').val())
                     },
-                    db_table: $('#tableDropdownButton').text().toLowerCase(),
+                    db_table: db_table,
                     k: parseInt($('#knn_k').val(), 10)
                 };
 
                 var timestamp_low = $('#timestamp_low').val();
                 var timestamp_high = $('#timestamp_high').val();
-
-                if(!isNaN(timestamp_low) && !isNaN(timestamp_high)) {
+                console.log(timestamp_low)
+                if(timestamp_low != '' && timestamp_high != '') {
                     data["query_origin"]["t_low"] = timestamp_low;
                     data["query_origin"]["t_high"] = timestamp_high;
                 }
 
-                console.log(JSON.stringify(data));
+                console.log(data);
                 
                 $.ajax({
                     url: 'http://localhost:8080/knn_query',
