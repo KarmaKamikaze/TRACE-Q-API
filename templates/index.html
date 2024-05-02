@@ -262,7 +262,6 @@
             });
 
 
-            var idCounter = 0;
             $('#content').on('click', '#uploadButton', function() {
                 var file = $('#fileInput')[0].files[0];
                 var db_table = $("#tableDropdownButton").text().toLowerCase();
@@ -274,7 +273,6 @@
 
                 if (file && db_table) {
                     var reader = new FileReader();
-                    var id;
 
                     reader.onload = function(e) {
                         var text = e.target.result;
@@ -346,7 +344,6 @@
                     };
 
                     reader.readAsText(file);
-                    idCounter++;
                 } else {
                     alert('Please select a file and table name.');
                 }
