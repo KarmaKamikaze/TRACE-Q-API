@@ -264,6 +264,7 @@
                 $('#content').html(html);
             });
 
+
             var idCounter = 0;
             $('#content').on('click', '#uploadButton', function() {
                 var file = $('#fileInput')[0].files[0];
@@ -540,6 +541,7 @@
 
             });
 
+
             $('#rangeQueryEndpoint').click(function(){
                 var html = `
                     <button type="button" class="btn btn-primary" id="runRangeQuery">Run</button>
@@ -599,6 +601,7 @@
 
             });
 
+
             $('#visualize').click(function(){
                 var html = `
                     <button type="button" class="btn btn-primary" id="visualize_all_days_for_id_btn">Visualize all days</button>
@@ -612,6 +615,7 @@
                 `;
                 $('#content').html(html);
             });
+
 
             $('#content').on('click', '#addInput', function() {
                 var newInputGroup = `
