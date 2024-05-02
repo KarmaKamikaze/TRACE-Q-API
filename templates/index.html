@@ -1,70 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trace-Q</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="#">Trace-Q</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
-            <ul class="navbar-nav">
-              <li class="nav-item dropdown">
-                <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                  Dropdown
-                </button>
-                <ul class="dropdown-menu dropdown-menu-dark">
-                  <li><a class="dropdown-item" href="#">Action</a></li>
-                  <li><a class="dropdown-item" href="#">Another action</a></li>
-                  <li><a class="dropdown-item" href="#">Something else here</a></li>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Trace-Q</title>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+            <a class="navbar-brand" href="#">Trace-Q</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
+                <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    Dropdown
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    </ul>
+                </li>
                 </ul>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+            </div>
+            </div>
+        </nav>
 
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-6 offset-md-3">
-                <h1>Trace-Q trajectory simplifier</h1>
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle mt-2" id="endpointDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      Select an endpoint
-                    </button>
-                    <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="#" id="insertEndpoint">Insert trajectory</a></li>
-                      <li><a class="dropdown-item" href="#" id="rangeQueryEndpoint">Query</a></li>
-                      <li><a class="dropdown-item" href="#" id="knnEndpoint">KNN</a></li>
-                    </ul>
-                </div>
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle mt-2 mb-2" id="tableDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Select a table
-                    </button>
-                    <ul class="dropdown-menu">
-                         <li><a class="dropdown-item" href="#" id="originalTable">Original</a></li>
-                         <li><a class="dropdown-item" href="#" id="simplifiedTable">Simplified</a></li>
-                    </ul>
-                </div>
-                <div id="content">
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-6 offset-md-3">
+                    <h1>Trace-Q trajectory simplifier</h1>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle mt-2" id="endpointDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Select an endpoint
+                        </button>
+                        <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" id="insertEndpoint">Insert trajectory</a></li>
+                        <li><a class="dropdown-item" href="#" id="rangeQueryEndpoint">Query</a></li>
+                        <li><a class="dropdown-item" href="#" id="knnEndpoint">KNN</a></li>
+                        <li><a class="dropdown-item" href="#" id="visualize">Visualize</a></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle mt-2 mb-2" id="tableDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Select a table
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" id="originalTable">Original</a></li>
+                            <li><a class="dropdown-item" href="#" id="simplifiedTable">Simplified</a></li>
+                        </ul>
+                    </div>
+                    <div id="content">
 
+                    </div>
+                    <div id="map" style="height: 400px;"></div>
                 </div>
             </div>
         </div>
-    </div>
-    
+    </body>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
+        var iconSize = [13, 20];
+        var iconAnchor = [3, 10];
+        var popupAnchor = [1, -16];
+
+        var originalIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: iconSize,
+            iconAnchor: iconAnchor,
+            popupAnchor: popupAnchor,
+            shadowSize: [0, 0]
+        });
+
+        var simplifiedIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: iconSize,
+            iconAnchor: iconAnchor,
+            popupAnchor: popupAnchor,
+            shadowSize: [0, 0]
+        });
+
+        var map = L.map('map').setView([39.71923, 116.78379], 13);
+
+        function resetMap() {
+            map.eachLayer(function (layer) {
+                map.removeLayer(layer);
+            });
+
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+
+            map.setView([39.71923, 116.78379], 13);
+        }
+
+        function connectTheDots(data){
+            var c = [];
+            for(i in data._layers) {
+                var x = data._layers[i]._latlng.lat;
+                var y = data._layers[i]._latlng.lng;
+                c.push([x, y]);
+            }
+            return c;
+        }
+
+
         $(document).ready(function(){
             $('#content').on('click', '#runInsert', function(){
                 var chosenTable = "original";
@@ -85,7 +142,7 @@
 
                     if(!data["locations"])
                         data["locations"] = [];
- 
+
                     data["locations"].push({
                         timestamp: timestamp,
                         longitude: parseFloat(longitude), 
@@ -109,8 +166,8 @@
 
             $('#content').on('click', '#runRangeQuery', function(){ 
                 var data = {};
-
-                data["db_table"] = $('#tableDropdownButton').text().toLowerCase();
+                var db_table = $('#tableDropdownButton').text().toLowerCase();
+                data["db_table"] = db_table;
 
                 data["longitudeMin"] = $('#longitudeMin').val();
                 data["longitudeMax"] = $('#longitudeMax').val();
@@ -128,6 +185,30 @@
                     data: JSON.stringify(data),
                     success: function(response) {
                         console.log('Successfully range queried:', response);
+
+                        var data = {
+                            db_table: db_table,
+                            id: response.trajectory_ids[1]
+                        }
+
+                        $.ajax({
+                            url: 'http://localhost:8080/load_from_id',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(data),
+                            success: function(response) {
+                                console.log('Successfully got:', response);
+                                var locations = response.response_trajectory[0].locations;
+
+                                locations.forEach(location => {
+                                    var marker = L.marker([location.latitude, location.longitude]).addTo(map);
+                                    marker.bindPopup(`<b>${location.timestamp}</b><br>Long: ${location.longitude} Lat: ${location.latitude}.`).openPopup();
+                                });
+                            },
+                            error: function(error) {
+                                console.error('Error getting trajectory data:', error);
+                            }
+                        });
                     },
                     error: function(error) {
                         console.error('Error making range query:', error);
@@ -181,33 +262,33 @@
                 `;
                 $('#content').html(html);
             });
-    
+
             $('#rangeQueryEndpoint').click(function(){
                 var html = `
                     <button type="button" class="btn btn-primary" id="runRangeQuery">Run</button>
                     <div class="mb-3">
                         <label for="longitudeMin" class="form-label">Longitude Min</label>
-                        <input type="number" class="form-control" id="longitudeMin" placeholder="Enter Min Longitude">
+                        <input type="number" class="form-control" id="longitudeMin" placeholder="Enter Min Longitude" value="1.1">
                     </div>
                     <div class="mb-3">
                         <label for="longitudeMax" class="form-label">Longitude Max</label>
-                        <input type="number" class="form-control" id="longitudeMax" placeholder="Enter Max Longitude">
+                        <input type="number" class="form-control" id="longitudeMax" placeholder="Enter Max Longitude" value="1000.1">
                     </div>
                     <div class="mb-3">
                         <label for="latitudeMin" class="form-label">Latitude Min</label>
-                        <input type="number" class="form-control" id="latitudeMin" placeholder="Enter Min Latitude">
+                        <input type="number" class="form-control" id="latitudeMin" placeholder="Enter Min Latitude" value="1.1">
                     </div>
                     <div class="mb-3">
                         <label for="latitudeMax" class="form-label">Latitude Max</label>
-                        <input type="number" class="form-control" id="latitudeMax" placeholder="Enter Max Latitude">
+                        <input type="number" class="form-control" id="latitudeMax" placeholder="Enter Max Latitude" value="1000.1">
                     </div>
                     <div class="mb-3">
                         <label for="timestampMin" class="form-label">Timestamp Min</label>
-                        <input type="datetime-local" aria-label="timestampMin" id="timestampMin" class="form-control timestampMin" step="1">
+                        <input type="datetime-local" aria-label="timestampMin" id="timestampMin" class="form-control timestampMin" step="1" value="2005-06-01T08:30">
                     </div>
                     <div class="mb-3">
                         <label for="timestampMax" class="form-label">Timestamp Max</label>
-                        <input type="datetime-local" aria-label="Timestamp" id="timestampMax" class="form-control timestampMax" step="1">
+                        <input type="datetime-local" aria-label="Timestamp" id="timestampMax" class="form-control timestampMax" step="1" value="2023-06-01T08:30">
                     </div>
                 `;
                 $('#content').html(html);
@@ -240,8 +321,21 @@
                 $('#content').html(html);
             });
 
-            var inputCount = 1;
-            $('#content').on('click', '#addInput', function(){
+            $('#visualize').click(function(){
+                var html = `
+                    <button type="button" class="btn btn-primary" id="visualize_all_days_for_id_btn">Visualize all days</button>
+                    <div class="mb-3">
+                        <label for="trajectory_id" class="form-label">Trajectory ID</label>
+                        <input type="number" class="form-control" id="trajectory_id" placeholder="Enter trajectory ID">
+                        <label for="date_picker" class="form-label">(Optional) Select a specific date
+                        <input type="text" id="date_picker" class="form-control" aria-label="Timestamp" placeholder="Enter a valid ID">
+                        <div class="spinner-border text-primary" id="visualization_spinner" role="status" style="display: none"></div>
+                    </div>  
+                `;
+                $('#content').html(html);
+            });
+
+            $('#content').on('click', '#addInput', function() {
                 var newInputGroup = `
                     <div class="input-group mb-3">
                         <input type="text" placeholder="longitude" aria-label="Longitude" class="form-control longitude">
@@ -253,17 +347,199 @@
                 $('#inputContainer').append(newInputGroup);
             });
 
+            $('#content').on('change', '#trajectory_id', function() {
+                var dates_with_data = [];
+
+                trajectory_id = Number($('#trajectory_id').val());
+                var dates_from_id_request_body = {
+                    id: trajectory_id
+                };
+
+                $.ajax({
+                    url: 'http://localhost:8080/get_dates_from_id',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(dates_from_id_request_body),
+                    success: function(response) {
+                        console.log('Successfully got:', response);
+                        response.dates.forEach(date => {
+                            dates_with_data.push(date);
+                        });
+                        initializeFlatpickr();
+                    },
+                    error: function(error) {
+                        console.error('Error getting dates from id:', error);
+                        return;
+                    }
+                });
+
+                var initializeFlatpickr = function() {
+                    flatpickr("#date_picker", {
+                        enable: dates_with_data,
+                        dateFormat: "Y-m-d",
+                        altInput: true,
+                        altFormat: "F j, Y",
+                        defaultDate: dates_with_data[0],
+                        onChange: function(selectedDates, dateStr, instance) {
+                            console.log("Selected Date:", dateStr);
+                            resetMap();
+                            $('#visualization_spinner').css("display", "block");
+                            
+                            var data = {
+                                id: trajectory_id,
+                                date: dateStr
+                            }
+
+                            $.ajax({
+                                url: 'http://localhost:8080/load_from_id_date',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                data: JSON.stringify(data),
+                                success: function(response) {
+                                    console.log('Successfully got from ID and date:', response);
+                                    
+                                    var original_locations = response.original_trajectory.locations;
+                                    var simplified_locations = response.simplified_trajectory.locations;
+                      
+                                    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                        maxZoom: 19,
+                                        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                                    }).addTo(map);
+
+                                    original_locations.forEach((location, index) => {
+                                        var marker = L.marker([location.latitude, location.longitude], {icon: originalIcon}).addTo(map);
+                                        var timestamp = new Date(0);
+                                        timestamp.setUTCSeconds(Number(location.timestamp));
+                                        marker.bindPopup(`<b>Original: ${timestamp}</b><br>Long: ${location.longitude} Lat: ${location.latitude}.`).openPopup();
+                                        
+                                        if (index < original_locations.length - 1) {
+                                            var nextLocation = original_locations[index + 1];
+                                            var latlngs = [
+                                                [location.latitude, location.longitude],
+                                                [nextLocation.latitude, nextLocation.longitude]
+                                            ];
+                                            var polyline = L.polyline(latlngs, {color: 'blue'}).addTo(map);
+                                        }
+                                    });
+
+                                    simplified_locations.forEach((location, index) => {
+                                        var marker = L.marker([location.latitude, location.longitude], {icon: simplifiedIcon}).addTo(map);
+                                        var timestamp = new Date(0);
+                                        timestamp.setUTCSeconds(Number(location.timestamp));
+                                        marker.bindPopup(`<b>Simplified: ${timestamp}</b><br>Long: ${location.longitude} Lat: ${location.latitude}.`).openPopup();
+                                        
+                                        if (index < simplified_locations.length - 1) {
+                                            var nextLocation = simplified_locations[index + 1];
+                                            var latlngs = [
+                                                [location.latitude, location.longitude],
+                                                [nextLocation.latitude, nextLocation.longitude]
+                                            ];
+                                            var polyline = L.polyline(latlngs, {color: 'orange'}).addTo(map);
+                                        }
+                                    });
+                                    $('#visualization_spinner').css("display", "none");
+                                },
+                                error: function(error) {
+                                    console.error('Error getting data from ID and date:', error);
+                                    $('#visualization_spinner').css("display", "none");
+                                }
+                            });
+                        }
+                    });
+                }; 
+            });
+
             $('#content').on('click', '.deleteInput', function(){
                 $(this).closest('.input-group').remove();
             });
 
-            $('#content').on('click', '#runRangeQuery', function(){
-                var longitudeMin = $('#longitudeMin').val();
-                var longitudeMax = $('#longitudeMax').val();
-                var latitudeMin = $('#latitudeMin').val();
-                var latitudeMax = $('#latitudeMax').val();
-                var timestampMin = $('#timestampMin').val();
-                var timestampMax = $('#timestampMax').val();
+            $('#content').on('click', '#visualize_all_days_for_id_btn', function() {
+                var trajectory_id = $('#trajectory_id').val();
+                if(!trajectory_id.trim().length) {
+                    alert("Trajectory ID cannot be an empty value");
+                    return;
+                }
+
+                $('#visualization_spinner').css("display", "block");
+
+                var trajectory_id = Number($('#trajectory_id').val());
+
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                }).addTo(map);
+
+                var original_data_request_body = {
+                    id: trajectory_id,
+                    db_table: "original"
+                }
+
+                $.ajax({
+                    url: 'http://localhost:8080/load_from_id',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(original_data_request_body),
+                    success: function(response) {
+                        console.log('Successfully got:', response);
+                        var original_locations = response.response_trajectory.locations;
+                        original_locations.forEach((location, index) => {
+                            var marker = L.marker([location.latitude, location.longitude], {icon: originalIcon}).addTo(map);
+                            var timestamp = new Date(0);
+                            timestamp.setUTCSeconds(Number(location.timestamp));
+                            marker.bindPopup(`<b>${timestamp}</b><br>Long: ${location.longitude} Lat: ${location.latitude}.`).openPopup();
+
+                            if (index < original_locations.length - 1) {
+                                var nextLocation = original_locations[index + 1];
+                                var latlngs = [
+                                    [location.latitude, location.longitude],
+                                    [nextLocation.latitude, nextLocation.longitude]
+                                ];
+                                var polyline = L.polyline(latlngs, {color: 'blue'}).addTo(map);
+                            }
+                        });
+                    },
+                    error: function(error) {
+                        console.error('Error getting original trajectory data:', error);
+                        $('#visualization_spinner').css("display", "none");
+                    }
+                });
+
+                var simplified_data_request_body = {
+                    id: trajectory_id,
+                    db_table: "simplified"
+                }
+
+                $.ajax({
+                    url: 'http://localhost:8080/load_from_id',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(simplified_data_request_body),
+                    success: function(response) {
+                        console.log('Successfully got:', response);
+                        var locations = response.response_trajectory.locations;
+
+                        locations.forEach((location, index) => {
+                            var marker = L.marker([location.latitude, location.longitude], {icon: simplifiedIcon}).addTo(map);
+                            var timestamp = new Date(0);
+                            timestamp.setUTCSeconds(Number(location.timestamp));
+                            marker.bindPopup(`<b>${timestamp}</b><br>Long: ${location.longitude} Lat: ${location.latitude}.`).openPopup();
+
+                            if (index < locations.length - 1) {
+                                var nextLocation = locations[index + 1];
+                                var latlngs = [
+                                    [location.latitude, location.longitude],
+                                    [nextLocation.latitude, nextLocation.longitude]
+                                ];
+                                var polyline = L.polyline(latlngs, {color: 'orange'}).addTo(map);
+                            }
+                        });
+                        $('#visualization_spinner').css("display", "none");
+                    },
+                    error: function(error) {
+                        console.error('Error getting simplified trajectory data:', error);
+                        $('#visualization_spinner').css("display", "none");
+                    }
+                });
             });
 
             $('#content').on('click', '#run_KNN', function(){
@@ -300,8 +576,7 @@
                 });
             });
         });
-        </script>
-</body>
-</html>
+    </script>
+</html> 
 
 
