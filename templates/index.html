@@ -26,52 +26,36 @@
                 <div class="dropdown">
                     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="insertEndpoint" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Insert Trajectory</button>
+                            <button class="nav-link active" id="insert_endpoint" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Insert Trajectory</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="simplifyEndpoint" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Simplify</button>
+                            <button class="nav-link" id="simplify_endpoint" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Simplify</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="rangeQueryEndpoint" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Query</button>
+                            <button class="nav-link" id="range_query_endpoint" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Query</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="knnEndpoint" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">KNN</button>
-                        </li>
+                            <button class="nav-link" id="knn_endpoint" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">KNN</button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="visualize" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Visualize</button>
                         </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="reset_db" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Reset</button>
+                        </li>
                     </ul>
                 </div>
-
-        <div class="container mt-5">
-            <div class="row">
-                <div class="col-md-6 offset-md-3">
-                    <h1>Trace-Q trajectory simplifier</h1>
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle mt-2" id="endpointDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Select an endpoint
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#" id="insert_endpoint">Insert trajectory</a></li>
-                            <li><a class="dropdown-item" href="#" id="range_query_endpoint">Query</a></li>
-                            <li><a class="dropdown-item" href="#" id="knn_endpoint">KNN</a></li>
-                            <li><a class="dropdown-item" href="#" id="visualize">Visualize</a></li>
-                            <li><a class="dropdown-item" href="#" id="reset_db">Reset</a></li>
-                        </ul>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle mt-2 mb-2" id="tableDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">Select a table</button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#" id="original_table">Original</a></li>
-                            <li><a class="dropdown-item" href="#" id="simplified_table">Simplified</a></li>
-                        </ul>
-                    </div>
-                    <div id="content">
-
-                    </div>
-                    <div id="map" style="height: 400px; display: none;"></div>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle mt-2 mb-2" id="tableDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">Select a table</button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" id="original_table">Original</a></li>
+                        <li><a class="dropdown-item" href="#" id="simplified_table">Simplified</a></li>
+                    </ul>
                 </div>
+                <div id="content">
+
+                </div>
+                <div id="map" style="height: 400px; display: none;"></div>
             </div>
         </div>
     </div>
@@ -223,7 +207,7 @@
                 var selectedDropdownItemID = $(this).attr('id');
                 var selectedDropdownItem = $(this).text();
 
-                if(["insert_endpoint", "range_query_endpoint", "knn_endpoint", "visualize", "reset_db"].includes(selectedDropdownItemID)) {
+                if(["insert_endpoint", "simplify_endpoint", "range_query_endpoint", "knn_endpoint", "visualize", "reset_db"].includes(selectedDropdownItemID)) {
                     $("#endpointDropdownButton").text(selectedDropdownItem);
                     $('#map').css("display", "none");
 
@@ -253,15 +237,6 @@
 
             $('#insert_endpoint').click(function() {
                 var html = `
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle mt-2 mb-2" id="tableDropdownButton" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Select a table
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#" id="originalTable">Original</a></li>
-                             <li><a class="dropdown-item" href="#" id="simplifiedTable">Simplified</a></li>
-                        </ul>
-                    </div>
                     <div class="card mb-3">
                         <div class="card-header">
                             Upload file
@@ -279,6 +254,7 @@
                         </div>
                         <div class="card-body mb-3">
                             <div id="inputContainer">
+                                <input type="number" aria-label="trajectory ID" id="trajectoryID" placeholder="Set trajectory ID">
                                 <button id="addInput" class="btn btn-primary">Add trajectory</button>
                                 <div class="input-group mb-3 mt-2">
                                     <input type="text" placeholder="longitude" aria-label="Longitude" class="form-control longitude">
@@ -295,12 +271,16 @@
             });
 
 
-            var idCounter = 0;
             $('#content').on('click', '#uploadButton', function() {
                 var file = $('#fileInput')[0].files[0];
-                var tableName = $("#tableDropdownButton").text().toLowerCase();
+                var db_table = $("#tableDropdownButton").text().toLowerCase();
 
-                if (file && tableName) {
+                if(db_table == "select a table") {
+                    alert("Please select a table");
+                    return;
+                }
+
+                if (file && db_table) {
                     var reader = new FileReader();
 
                     reader.onload = function(e) {
@@ -314,6 +294,8 @@
                             var end = Math.min(start + chunkSize, lines.length);
                             var chunkLines = lines.slice(start, end);
                             var locations = [];
+                            var idpart =lines[0].trim().split(',');
+                            var id = idpart[0];
 
                             chunkLines.forEach(function(line) {
                                 var parts = line.trim().split(',');
@@ -334,19 +316,19 @@
                                     } else {
                                         console.log('Invalid longitude or latitude:', line);
                                     }
+
                                 } else {
                                     console.log('Invalid line format:', line);
                                 }
+
                             });
 
                             if (locations.length > 0) {
                                 var jsonData = {
-                                    "db_table": "original",
-                                    "id": idCounter.toString(),
+                                    "db_table": db_table,
+                                    "id": id,
                                     "locations": locations
                                 };
-
-                                console.log(jsonData);
 
                                 $.ajax({
                                     url: 'http://localhost:8080/insert',
@@ -371,14 +353,13 @@
                     };
 
                     reader.readAsText(file);
-                    idCounter++;
                 } else {
                     alert('Please select a file and table name.');
                 }
 
             });
 
-            $('#simplifyEndpoint').click(function (){
+            $('#simplify_endpoint').click(function (){
                 var html =`
                       <div class="mb-2">
                         <label for="resolutionScale" class="form-label">Resolution scale</label>
@@ -529,11 +510,16 @@
                         </div>
                     </div>
                     <button type="button" class="btn btn-primary mb-3 mt-3" id="runSimplify">Simplify Trajectory</button>
+                    <button type="button" class="btn btn-primary" id="runDBstatus">Check Status</button>
                 `;
                 $('#content').html(html);
             });
 
             $('#content').on('click', '#runSimplify', function(){
+                var button = $(this);
+                var simplefyButton = 'blue';
+
+                button.css('background-color', simplefyButton);
 
                 var requestBody = {
                     "resolution_scale": parseFloat($('#resolutionScale').val()),
@@ -551,8 +537,6 @@
                     "use_KNN_for_query_accuracy": Boolean($('#useKNNForRangeQueryAccuracy').prop('checked'))
                 };
 
-                console.log(JSON.stringify(requestBody));
-                console.log("before post");
                 $.ajax({
                     url: 'http://localhost:8080/run',
                     type: 'POST',
@@ -560,10 +544,13 @@
                     data: JSON.stringify(requestBody),
                     success: function(response) {
                         console.log('Successful simplification:', response);
+                        if (response === 'Simplification process completed successfully') {
+                            button.css('background-color', 'green');
+                        } else {
+                            button.css('background-color', 'red');
+                        }
                     },
                     error: function(xhr, status, error) {
-                        console.log(xhr);
-                        console.log(status);
                         console.error('Error making the simplification:', error);
                     }
 
@@ -571,8 +558,35 @@
 
             });
 
+            $('#content').on('click', '#runDBstatus', function() {
+                var button = $(this);
+                var dbstatusButton = 'blue';
 
-            $('#rangeQueryEndpoint').click(function(){
+                button.css('background-color', dbstatusButton);
+
+                $.ajax({
+                    url: 'http://localhost:8080/status',
+                    type: 'POST',
+                    data: { },
+                    success: function(response) {
+                        if (response === 'true') {
+                            // If backend response is true, set button color to green
+                            button.css('background-color', 'green');
+                            console.log(response);
+                        } else {
+                            // If backend response is false, set button color to red
+                            button.css('background-color', 'red');
+                            console.log(response);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        button.css('background-color', 'gray');
+                    }
+                });
+            });
+
+            $('#range_query_endpoint').click(function(){
                 var html = `
                     <button type="button" class="btn btn-primary" id="runRangeQuery">Run</button>
                     <div class="mb-3">
@@ -648,7 +662,7 @@
 
             $('#reset_db').click(function() {
                 var html = ` 
-                    <button type="button" class="btn btn-primary" id="run_reset_db_btn">Reset Database</button>
+                    <button type="button" class="btn btn-primary mb-2" id="run_reset_db_btn">Reset Database</button>
                 `;
                 $('#content').html(html);
             });
