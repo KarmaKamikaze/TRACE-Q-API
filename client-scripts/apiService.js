@@ -14,23 +14,21 @@ function insertTrajectory(requestBody) {
 }
 
 function fetchDatesFromId(requestBody) {
-    $.ajax({
-        url: 'http://localhost:8080/get_dates_from_id',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(requestBody),
-        success: function(response) {
-            console.log('Successfully got:', response);
-            var dates_with_data = [];
-            response.dates.forEach(date => {
-                dates_with_data.push(date);
-            });
-            return dates_with_data;
-        },
-        error: function(error) {
-            console.error('Error getting dates from id:', error);
-            return [];
-        }
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: 'http://localhost:8080/get_dates_from_id',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(requestBody),
+            success: function(response) {
+                console.log('Successfully got:', response);
+                resolve(response.dates);
+            },
+            error: function(error) {
+                console.error('Error getting dates from id:', error);
+                reject([]);
+            }
+        });
     });
 }
 

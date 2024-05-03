@@ -1,9 +1,8 @@
 function bindEventHandlers() {
     $('#visualize_btn').click(handleVisualize);
     $('#reset_db').click(handleResetDB);
-    $(".dropdown-item").click(handleEndpointClick);
-    $('#original_table').click(handleOriginalTableClick);
-    $('#simplified_table').click(handleSimplifiedTableClick);
+    $(".nav-link").click(handleEndpointClick);
+    $('.dropdown-item').click(handleDropdownChange);
     $('#insert_endpoint').click(handleInsertEndpoint);
     $('#simplify_endpoint').click(handleSimplifyEndpoint);
     $('#range_query_endpoint').click(handleRangeQueryEndpoint);
@@ -43,6 +42,11 @@ function handleEndpointClick() {
     }
 }
 
+function handleDropdownChange() {
+    var selectedDropdownItemName = $(this).text();
+    $("#tableDropdownButton").text(selectedDropdownItemName)
+}
+
 function handleOriginalTableClick() {
     chosenTable = "original";
     var selectedDropdownItem = $(this).text();
@@ -71,12 +75,9 @@ function handleKNNEndpoint() {
     $('#content').load("markups/knnEndpoint.html");
 }
 
-function handleVisualize() {
-    $('#map').css("display", "block");
-    $('#content').load("markups/visualize.html");
-}
 
 function handleVisualize() {
+    $('#map').css("display", "block");
     $('#content').load("markups/visualize.html");
 }
 
@@ -196,22 +197,20 @@ function handleRunKNN() {
     performKNNQuery(requestBody)
 }
 
-function handleTrajectoryChange() {
-    var dates_with_data = [];
-
+async function handleTrajectoryChange() {
     trajectory_id = Number($('#trajectory_id').val());
     var requestBody = {
         id: trajectory_id
     };
 
-    datesWithData = fetchDatesFromId(requestBody);
+    var datesWithData = await fetchDatesFromId(requestBody);
 
     flatpickr("#date_picker", {
-        enable: dates_with_data,
+        enable: datesWithData,
         dateFormat: "Y-m-d",
         altInput: true,
         altFormat: "F j, Y",
-        defaultDate: dates_with_data[0],
+        defaultDate: datesWithData[0],
         onChange: function(selectedDates, dateStr, instance) {
             resetMap();
             showSpinner();
@@ -219,7 +218,7 @@ function handleTrajectoryChange() {
             var requestBody = {
                 id: trajectory_id,
                 date: dateStr
-            }
+            }  
 
             loadTrajectoriesFromIDAndDate(requestBody);
         }
@@ -313,7 +312,7 @@ function handleRunDBStatus() {
 
     dbStatusButton.css('background-color', 'blue');
 
-    runDBStatus();
+    runDBStatus(dbStatusButton);
 }
 
 function handleVisualizeAllDaysByID() {
