@@ -78,6 +78,7 @@ function handleKNNEndpoint() {
 
 function handleVisualize() {
     $('#map').css("display", "block");
+    map.invalidateSize(); // having this is necessary for proper map load
     $('#content').load("markups/visualize.html");
 }
 
@@ -194,7 +195,7 @@ function handleRunKNN() {
         data["query_origin"]["t_high"] = timestamp_high;
     }
     
-    performKNNQuery(requestBody)
+    performKNNQuery(requestBody);
 }
 
 async function handleTrajectoryChange() {

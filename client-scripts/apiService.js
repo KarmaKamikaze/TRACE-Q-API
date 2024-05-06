@@ -110,8 +110,6 @@ function loadTrajectoriesFromIDAndDate(requestBody) {
                         [location.latitude, location.longitude],
                         [nextLocation.latitude, nextLocation.longitude]
                     ];
-                    console.log(location.latitude)
-                    console.log(location.longitude)
                     L.polyline(latlngs, {color: 'orange'}).addTo(map);
                 }
             });
