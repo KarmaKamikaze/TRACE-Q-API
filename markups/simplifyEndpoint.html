@@ -11,21 +11,21 @@
     <input type="number" class="form-control" id="resolutionScale" value="2.0">
 </div>
 <div class="mb-2">
-    <label for="minRangeQueryAccuracy" class="form-label">Min query accuracy</label>
+    <label for="minRangeQueryAccuracy" class="form-label">Min range query accuracy</label>
     <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#minRangeQueryAccCollapse" aria-expanded="false" aria-controls="minRangeQueryAccCollapse">Info</button>
     <div class="collapse" id="minRangeQueryAccCollapse">
         <div class="card card-body">
-            The minimum query accuracy that the simplification method must uphold.
+            The minimum range query accuracy that the simplification method must uphold.
         </div>
     </div>
     <input type="number" class="form-control" id="minRangeQueryAccuracy" value="0.95">
 </div>
     <div class="mb-2">
-    <label for="minKnnQueryAccuracy" class="form-label">Min query accuracy</label>
+    <label for="minKnnQueryAccuracy" class="form-label">Min KNN query accuracy</label>
     <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#minKnnQueryAccCollapse" aria-expanded="false" aria-controls="minKnnQueryAccCollapse">Info</button>
     <div class="collapse" id="minKnnQueryAccCollapse">
         <div class="card card-body">
-            The minimum query accuracy that the simplification method must uphold.
+            The minimum KNN query accuracy that the simplification method must uphold.
         </div>
     </div>
     <input type="number" class="form-control" id="minKnnQueryAccuracy" value="0.95">
@@ -67,7 +67,7 @@
     <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#knnQueryGridDenCollapse" aria-expanded="false" aria-controls="knnQueryGridDenCollapse">Info</button>
     <div class="collapse" id="knnQueryGridDenCollapse">
         <div class="card card-body">
-            Factor describing how close points appear in the grid for range queries.
+            Factor describing how close points appear in the grid for KNN queries.
             Lower values cause points to be more densely packed, thus increasing the number of queries
             Possible values: 0.2, 0.05
         </div>
@@ -117,11 +117,9 @@
     <button class="btn btn-light float-end mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#knnQueryTimeIntervalCollapse" aria-expanded="false" aria-controls="knnQueryTimeIntervalCollapse">Info</button>
     <div class="collapse" id="knnQueryTimeIntervalCollapse">
         <div class="card card-body">
-            The factor that will be used to scale time intervals for each window in get_ids_from_knn queries.
+            The factor that will be used to scale time intervals for each window in KNN queries.
             Lower values will result in more queries.
             Possible values: 0.1, 1
-            Lowest allowed KNN time interval multiplier is 0.02, otherwise number of query time points would be larger
-            than the allowed database connections.
         </div>
     </div>
     <input type="number" class="form-control" id="knnQueryTimeInterval" value="0.2">
