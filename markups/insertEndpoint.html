@@ -1,0 +1,30 @@
+<div class="card mb-3">
+    <div class="card-header">
+        Upload file
+    </div>
+    <div class="card-body">
+        <div class="input-group mb-3 mt-2">
+            <input type="file" class="form-control" id="fileInput"><br>
+            <button id="uploadButton" class="btn btn-primary rounded">Upload File</button>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        Insert Trajectory point by point
+    </div>
+    <div class="card-body mb-3">
+        <div id="inputContainer">
+            <input type="number" aria-label="trajectory ID" id="trajectoryID" placeholder="Set trajectory ID">
+            <button id="addInput" class="btn btn-primary">Add trajectory</button>
+            <div class="input-group mb-3 mt-2">
+                <input type="text" placeholder="longitude" aria-label="Longitude" class="form-control longitude">
+                <input type="text" placeholder="latitude" aria-label="Latitude" class="form-control latitude">
+                <input type="datetime-local" aria-label="Timestamp" class="form-control timestamp" step="1">
+                <button class="btn btn-danger deleteInput">Delete</button>
+            </div>
+        </div>
+        <button type="button" class="btn btn-primary mb-3" id="runInsert">Insert trajectory</button>
+    </div>
+</div>
+
